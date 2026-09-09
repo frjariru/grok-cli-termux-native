@@ -85,3 +85,6 @@ echo "========================================"
 rkhunter --check --rwo 2>/dev/null | grep -Ev "passwd|warning|immutable"
 echo "[*] Auditoría de rkhunter completada."
 echo "========================================"
+
+# Enviar notificación nativa a Android al terminar
+termux-notification -t "Mantenimiento Termux Completo" -c "ClamAV y rkhunter finalizaron con éxito. Sistema Seguro." --sound --vibrate 500 --id grok-security-scan
