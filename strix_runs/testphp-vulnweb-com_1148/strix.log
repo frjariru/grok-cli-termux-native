@@ -1,0 +1,417 @@
+2026-09-19 23:35:11.355 INFO    testphp-vulnweb-com_1148 - strix.core.runner: Starting Strix scan testphp-vulnweb-com_1148 (image=ghcr.io/usestrix/strix-sandbox:1.3.0, max_turns=500, interactive=False, run_dir=/workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148)
+2026-09-19 23:35:11.355 INFO    testphp-vulnweb-com_1148 - strix.core.runner: LLM model resolved: xai/grok-4.6
+2026-09-19 23:35:11.355 INFO    testphp-vulnweb-com_1148 - strix.core.runner: Bringing up sandbox session for scan testphp-vulnweb-com_1148
+2026-09-19 23:35:11.355 DEBUG   testphp-vulnweb-com_1148 - strix.runtime.backends: Selected sandbox backend: docker
+2026-09-19 23:35:11.356 INFO    testphp-vulnweb-com_1148 - strix.runtime.session_manager: Creating sandbox session for scan testphp-vulnweb-com_1148 (backend=docker, image=ghcr.io/usestrix/strix-sandbox:1.3.0)
+2026-09-19 23:35:11.564 DEBUG   testphp-vulnweb-com_1148 - strix.runtime.docker_client: Creating sandbox container: image=ghcr.io/usestrix/strix-sandbox:1.3.0 caps=['NET_ADMIN', 'NET_RAW'] exposed_ports=[48080]
+2026-09-19 23:35:11.641 INFO    testphp-vulnweb-com_1148 - strix.runtime.docker_client: Sandbox container created: id=562a08aec8b4 image=ghcr.io/usestrix/strix-sandbox:1.3.0
+2026-09-19 23:35:12.704 DEBUG   testphp-vulnweb-com_1148 - strix.runtime.session_manager: Caido host endpoint resolved: http://127.0.0.1:32768
+2026-09-19 23:35:12.705 INFO    testphp-vulnweb-com_1148 - strix.runtime.session_manager: Sandbox session for scan testphp-vulnweb-com_1148 ready and cached
+2026-09-19 23:35:12.705 INFO    testphp-vulnweb-com_1148 - strix.core.runner: Sandbox ready for scan testphp-vulnweb-com_1148
+2026-09-19 23:35:12.708 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: scan_modes/quick -> quick
+2026-09-19 23:35:12.709 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: tooling/agent_browser -> agent_browser
+2026-09-19 23:35:12.709 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: tooling/python -> python
+2026-09-19 23:35:12.710 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: analysis/counterevidence -> counterevidence
+2026-09-19 23:35:12.711 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: analysis/severity_calibration -> severity_calibration
+2026-09-19 23:35:12.712 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: coordination/root_agent -> root_agent
+2026-09-19 23:35:12.712 DEBUG   testphp-vulnweb-com_1148 - strix.skills: load_skills: 6 skill(s) resolved
+2026-09-19 23:35:12.736 DEBUG   testphp-vulnweb-com_1148 - strix.agents.prompt: render_system_prompt: scan_mode=quick root=True whitebox=False skills=6 prompt_len=102052
+2026-09-19 23:35:12.736 INFO    testphp-vulnweb-com_1148 - strix.agents.factory: Built root agent 'Root Agent' (skills=0, tools=41, scan_mode=quick, whitebox=False)
+2026-09-19 23:35:12.737 INFO    testphp-vulnweb-com_1148 - strix.core.agents: agent.register 840320cd (Root Agent) parent=-
+2026-09-19 23:35:12.754 INFO    testphp-vulnweb-com_1148 - strix.runtime.caido_bootstrap: Bootstrapping Caido client (host=http://127.0.0.1:32768, container=http://127.0.0.1:48080)
+2026-09-19 23:35:12.770 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating trace
+2026-09-19 23:35:12.772 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Setting current trace: no-op
+2026-09-19 23:35:12.772 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:12.782 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:12.782 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 1, current_agent=Root Agent
+2026-09-19 23:35:12.782 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:12.784 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:35:12.784 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:12.787 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:35:12.854 DEBUG   testphp-vulnweb-com_1148 - strix.runtime.caido_bootstrap: loginAsGuest attempt 1/10 failed: curl exit 7: curl: (7) Failed to connect to 127.0.0.1 port 48080 after 0 ms: Could not connect to server
+
+2026-09-19 23:35:15.205 INFO    testphp-vulnweb-com_1148 - strix.runtime.caido_bootstrap: Caido project selected: 6bb8d99c-5b0b-4693-b548-f263ed576aa0
+2026-09-19 23:35:28.535 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:35:28.537 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:35:28.537 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:35:28.538 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:35:28.538 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:35:28.538 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:35:28.539 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:28.540 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool think
+2026-09-19 23:35:28.540 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool think completed.
+2026-09-19 23:35:28.540 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-09-19 23:35:28.549 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 2, current_agent=Root Agent
+2026-09-19 23:35:28.549 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:28.551 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:35:28.551 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:28.554 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:35:31.382 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:35:31.383 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:35:31.383 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:35:31.384 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:35:31.384 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:35:31.385 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:31.385 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool view_agent_graph
+2026-09-19 23:35:31.385 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool view_agent_graph completed.
+2026-09-19 23:35:31.386 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 2 complete, next_step type=NextStepRunAgain
+2026-09-19 23:35:31.395 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 3, current_agent=Root Agent
+2026-09-19 23:35:31.395 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:31.396 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:35:31.396 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:31.399 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:35:32.933 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:35:32.934 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:35:32.935 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:35:32.935 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:35:32.936 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:35:32.936 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:32.937 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool get_threat_model
+2026-09-19 23:35:32.937 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool get_threat_model completed.
+2026-09-19 23:35:32.938 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 3 complete, next_step type=NextStepRunAgain
+2026-09-19 23:35:32.953 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 4, current_agent=Root Agent
+2026-09-19 23:35:32.953 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:32.954 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:35:32.955 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:32.957 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:35:38.001 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:35:38.003 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:35:38.003 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:35:38.004 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:35:38.004 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:35:38.005 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:38.006 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool list_notes
+2026-09-19 23:35:38.006 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool list_notes completed.
+2026-09-19 23:35:38.007 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 4 complete, next_step type=NextStepRunAgain
+2026-09-19 23:35:38.036 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 5, current_agent=Root Agent
+2026-09-19 23:35:38.036 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:38.037 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:35:38.037 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:38.040 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:35:41.063 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:35:41.064 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:35:41.065 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:35:41.065 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:35:41.066 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:35:41.066 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:41.067 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool list_coverage
+2026-09-19 23:35:41.067 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool list_coverage completed.
+2026-09-19 23:35:41.067 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 5 complete, next_step type=NextStepRunAgain
+2026-09-19 23:35:41.076 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 6, current_agent=Root Agent
+2026-09-19 23:35:41.076 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:41.077 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:35:41.078 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:41.080 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:35:43.839 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:35:43.840 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:35:43.841 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:35:43.842 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:35:43.842 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:35:43.843 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:43.843 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool list_reports
+2026-09-19 23:35:43.844 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool list_reports completed.
+2026-09-19 23:35:43.844 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 6 complete, next_step type=NextStepRunAgain
+2026-09-19 23:35:43.858 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 7, current_agent=Root Agent
+2026-09-19 23:35:43.858 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:43.859 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:35:43.860 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:43.862 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:35:48.896 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:35:48.897 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:35:48.898 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:35:48.899 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:35:48.899 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:35:48.900 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:48.900 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool create_todo
+2026-09-19 23:35:48.900 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool create_todo completed.
+2026-09-19 23:35:48.901 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 7 complete, next_step type=NextStepRunAgain
+2026-09-19 23:35:48.912 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 8, current_agent=Root Agent
+2026-09-19 23:35:48.912 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:48.913 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:35:48.913 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:48.915 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:35:51.729 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:35:51.730 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:35:51.731 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:35:51.731 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:35:51.731 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:35:51.732 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:51.732 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool update_todo
+2026-09-19 23:35:51.733 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool update_todo completed.
+2026-09-19 23:35:51.733 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 8 complete, next_step type=NextStepRunAgain
+2026-09-19 23:35:51.744 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 9, current_agent=Root Agent
+2026-09-19 23:35:51.744 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:51.746 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:35:51.746 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:35:51.748 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:36:08.284 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:36:08.285 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:36:08.285 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:36:08.286 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:36:08.286 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:36:08.287 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:08.287 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool create_agent
+2026-09-19 23:36:08.291 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: reconnaissance/asset_discovery -> asset_discovery
+2026-09-19 23:36:08.291 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: tooling/katana -> katana
+2026-09-19 23:36:08.292 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: tooling/httpx -> httpx
+2026-09-19 23:36:08.292 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: tooling/nmap -> nmap
+2026-09-19 23:36:08.293 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: tooling/agent_browser -> agent_browser
+2026-09-19 23:36:08.293 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: scan_modes/quick -> quick
+2026-09-19 23:36:08.293 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: tooling/python -> python
+2026-09-19 23:36:08.294 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: analysis/counterevidence -> counterevidence
+2026-09-19 23:36:08.294 DEBUG   testphp-vulnweb-com_1148 - strix.skills: Loaded skill: analysis/severity_calibration -> severity_calibration
+2026-09-19 23:36:08.294 DEBUG   testphp-vulnweb-com_1148 - strix.skills: load_skills: 9 skill(s) resolved
+2026-09-19 23:36:08.311 DEBUG   testphp-vulnweb-com_1148 - strix.agents.prompt: render_system_prompt: scan_mode=quick root=False whitebox=False skills=9 prompt_len=116733
+2026-09-19 23:36:08.311 INFO    testphp-vulnweb-com_1148 - strix.agents.factory: Built child agent 'Recon Mapper' (skills=5, tools=41, scan_mode=quick, whitebox=False)
+2026-09-19 23:36:08.311 INFO    testphp-vulnweb-com_1148 - strix.core.agents: agent.register 9fd84b16 (Recon Mapper) parent=840320cd
+2026-09-19 23:36:08.312 INFO    testphp-vulnweb-com_1148 - strix.tools.agents_graph.tools: create_agent: spawned 9fd84b16 (Recon Mapper) parent=840320cd skills=5 task_len=2794
+2026-09-19 23:36:08.312 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool create_agent completed.
+2026-09-19 23:36:08.313 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 9 complete, next_step type=NextStepRunAgain
+2026-09-19 23:36:08.325 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 10, current_agent=Root Agent
+2026-09-19 23:36:08.326 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:08.327 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:36:08.327 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:08.330 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:36:08.343 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:08.349 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:08.350 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 1, current_agent=Recon Mapper
+2026-09-19 23:36:08.350 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:08.350 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:36:08.351 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:08.353 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:36:11.951 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:36:11.952 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:36:11.952 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:36:11.953 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:36:11.953 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:36:11.954 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:11.954 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool wait_for_agents
+2026-09-19 23:36:11.954 INFO    testphp-vulnweb-com_1148 - strix.core.agents: agent.status 840320cd=waiting
+2026-09-19 23:36:16.115 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:36:16.116 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:36:16.117 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:36:16.117 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:36:16.117 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:36:16.118 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:36:16.118 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:16.119 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool get_threat_model
+2026-09-19 23:36:16.119 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool get_threat_model completed.
+2026-09-19 23:36:16.119 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-09-19 23:36:16.130 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 2, current_agent=Recon Mapper
+2026-09-19 23:36:16.130 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:16.131 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:36:16.131 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:16.133 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:36:22.465 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:36:22.466 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:36:22.467 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:36:22.467 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:36:22.467 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:36:22.468 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:22.468 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool create_todo
+2026-09-19 23:36:22.469 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool create_todo completed.
+2026-09-19 23:36:22.469 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 2 complete, next_step type=NextStepRunAgain
+2026-09-19 23:36:22.480 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 3, current_agent=Recon Mapper
+2026-09-19 23:36:22.481 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:22.482 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:36:22.482 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:22.484 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:36:25.855 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:36:25.856 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:36:25.857 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:36:25.857 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:36:25.857 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:36:25.858 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:25.858 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool list_notes
+2026-09-19 23:36:25.859 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool list_notes completed.
+2026-09-19 23:36:25.859 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 3 complete, next_step type=NextStepRunAgain
+2026-09-19 23:36:25.869 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 4, current_agent=Recon Mapper
+2026-09-19 23:36:25.869 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:25.870 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:36:25.871 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:25.874 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:36:30.974 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:36:30.976 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:36:30.977 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:36:30.977 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:36:30.977 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:36:30.978 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:30.978 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool think
+2026-09-19 23:36:30.979 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool think completed.
+2026-09-19 23:36:30.979 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 4 complete, next_step type=NextStepRunAgain
+2026-09-19 23:36:30.989 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 5, current_agent=Recon Mapper
+2026-09-19 23:36:30.989 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:30.990 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:36:30.991 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:30.993 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:36:36.045 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:36:36.046 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:36:36.047 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:36:36.048 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:36:36.048 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:36:36.049 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:59.154 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 5 complete, next_step type=NextStepRunAgain
+2026-09-19 23:36:59.163 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 6, current_agent=Recon Mapper
+2026-09-19 23:36:59.163 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:59.164 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:36:59.165 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:36:59.167 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:37:05.410 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:37:05.411 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:37:05.412 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:37:05.413 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:37:05.413 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:37:05.413 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:37:30.418 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 6 complete, next_step type=NextStepRunAgain
+2026-09-19 23:37:30.429 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 7, current_agent=Recon Mapper
+2026-09-19 23:37:30.429 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:37:30.430 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:37:30.430 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:37:30.432 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:37:33.925 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:37:33.926 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:37:33.927 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:37:33.927 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:37:33.928 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:37:33.928 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:37:35.802 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 7 complete, next_step type=NextStepRunAgain
+2026-09-19 23:37:35.812 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 8, current_agent=Recon Mapper
+2026-09-19 23:37:35.813 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:37:35.814 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:37:35.814 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:37:35.816 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:37:46.790 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:37:46.791 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:37:46.792 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:37:46.793 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:37:46.793 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:37:46.793 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:37:46.793 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:38:10.979 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 8 complete, next_step type=NextStepRunAgain
+2026-09-19 23:38:10.989 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 9, current_agent=Recon Mapper
+2026-09-19 23:38:10.989 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:38:10.990 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:38:10.991 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:38:10.993 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:38:23.358 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:38:23.359 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:38:23.360 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:38:23.361 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:38:23.361 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:38:23.362 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:38:53.367 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 9 complete, next_step type=NextStepRunAgain
+2026-09-19 23:38:53.376 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 10, current_agent=Recon Mapper
+2026-09-19 23:38:53.376 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:38:53.377 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:38:53.378 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:38:53.380 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:39:02.040 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:39:02.041 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:39:02.042 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:39:02.043 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:39:02.043 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:39:02.044 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:39:02.089 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 10 complete, next_step type=NextStepRunAgain
+2026-09-19 23:39:02.100 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 11, current_agent=Recon Mapper
+2026-09-19 23:39:02.100 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:39:02.101 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:39:02.101 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:39:02.104 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:39:15.714 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:39:15.715 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:39:15.716 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:39:15.716 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:39:15.716 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:39:15.716 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:39:15.717 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:39:15.717 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool web_search
+2026-09-19 23:39:15.718 WARNING testphp-vulnweb-com_1148 - strix.tools.web_search.tool: web_search invoked without EXA_API_KEY or PERPLEXITY_API_KEY configured
+2026-09-19 23:39:15.718 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool web_search completed.
+2026-09-19 23:39:15.718 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 11 complete, next_step type=NextStepRunAgain
+2026-09-19 23:39:15.728 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 12, current_agent=Recon Mapper
+2026-09-19 23:39:15.728 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:39:15.729 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:39:15.729 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:39:15.731 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:39:54.273 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:39:54.274 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:39:54.275 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:39:54.276 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:39:54.276 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:39:54.276 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:39:54.276 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:39:54.277 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool create_note
+2026-09-19 23:39:54.278 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool create_note completed.
+2026-09-19 23:39:54.278 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 12 complete, next_step type=NextStepRunAgain
+2026-09-19 23:39:54.290 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 13, current_agent=Recon Mapper
+2026-09-19 23:39:54.290 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:39:54.291 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:39:54.292 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:39:54.294 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:40:00.183 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:40:00.184 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:40:00.185 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:40:00.186 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:40:00.186 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:40:00.186 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:00.187 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool create_note
+2026-09-19 23:40:00.188 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool create_note completed.
+2026-09-19 23:40:00.188 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 13 complete, next_step type=NextStepRunAgain
+2026-09-19 23:40:00.198 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 14, current_agent=Recon Mapper
+2026-09-19 23:40:00.198 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:00.199 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:40:00.199 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:00.202 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:40:03.437 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:40:03.438 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:40:03.440 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:40:03.440 INFO    testphp-vulnweb-com_1148 - strix.core.execution: sub-agent 9fd84b16 stopped at the budget reserve: Sub-agent budget reserve reached: spent $0.9294 of $1.00 (>= 90% reserve); stopping this sub-agent so the root agent can finish the scan.
+2026-09-19 23:40:03.440 INFO    testphp-vulnweb-com_1148 - strix.core.agents: agent.status 9fd84b16=stopped
+2026-09-19 23:40:03.441 INFO    testphp-vulnweb-com_1148 - strix.core.execution: child 9fd84b16 stopped at the sub-agent budget reserve
+2026-09-19 23:40:03.450 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool wait_for_agents completed.
+2026-09-19 23:40:03.450 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 10 complete, next_step type=NextStepRunAgain
+2026-09-19 23:40:03.461 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 11, current_agent=Root Agent
+2026-09-19 23:40:03.461 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:03.462 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:40:03.462 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:03.465 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:40:10.551 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:40:10.552 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:40:10.553 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:40:10.553 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:40:10.553 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-09-19 23:40:10.553 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:40:10.554 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:10.555 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool think
+2026-09-19 23:40:10.555 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool think completed.
+2026-09-19 23:40:10.555 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 11 complete, next_step type=NextStepRunAgain
+2026-09-19 23:40:10.564 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 12, current_agent=Root Agent
+2026-09-19 23:40:10.564 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:10.565 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:40:10.565 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:10.568 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:40:12.238 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:40:12.239 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:40:12.240 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:40:12.241 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=reasoning class=ResponseReasoningItem
+2026-09-19 23:40:12.241 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-09-19 23:40:12.241 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:12.242 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Invoking tool list_notes
+2026-09-19 23:40:12.242 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tool list_notes completed.
+2026-09-19 23:40:12.243 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Turn 12 complete, next_step type=NextStepRunAgain
+2026-09-19 23:40:12.254 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Starting turn 13, current_agent=Root Agent
+2026-09-19 23:40:12.255 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:12.256 DEBUG   testphp-vulnweb-com_1148 - openai.agents: No conversation_id available for request
+2026-09-19 23:40:12.256 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Tracing is disabled. Not creating span
+2026-09-19 23:40:12.258 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Calling LLM
+2026-09-19 23:40:46.329 INFO    testphp-vulnweb-com_1148 - strix.report.coverage: Saved coverage record to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/coverage.json (0 surface(s), 1 gap(s))
+2026-09-19 23:40:46.330 INFO    testphp-vulnweb-com_1148 - strix.report.sarif: Wrote SARIF 2.1.0 report: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148/findings.sarif (0 results)
+2026-09-19 23:40:46.331 INFO    testphp-vulnweb-com_1148 - strix.report.state: Essential scan data saved to: /workspaces/grok-cli-termux-native/strix_runs/testphp-vulnweb-com_1148
+2026-09-19 23:40:46.331 DEBUG   testphp-vulnweb-com_1148 - openai.agents: Resetting current trace
+2026-09-19 23:40:46.331 INFO    testphp-vulnweb-com_1148 - strix.core.execution: agent 840320cd reached the scan budget limit; stopping the scan: Token budget of $1.00 exceeded (spent $1.0340)
+2026-09-19 23:40:46.331 INFO    testphp-vulnweb-com_1148 - strix.core.agents: agent.status 840320cd=stopped
+2026-09-19 23:40:46.332 INFO    testphp-vulnweb-com_1148 - strix.core.runner: Scan testphp-vulnweb-com_1148 stopped: Token budget of $1.00 exceeded (spent $1.0340)
+2026-09-19 23:40:46.332 INFO    testphp-vulnweb-com_1148 - strix.core.agents: agent.status 840320cd=stopped
+2026-09-19 23:40:46.333 INFO    testphp-vulnweb-com_1148 - strix.core.runner: Tearing down sandbox session for scan testphp-vulnweb-com_1148
+2026-09-19 23:40:46.505 INFO    testphp-vulnweb-com_1148 - strix.runtime.session_manager: Cleaned up sandbox session for scan testphp-vulnweb-com_1148
+2026-09-19 23:40:46.507 INFO    testphp-vulnweb-com_1148 - strix.core.runner: Strix scan testphp-vulnweb-com_1148 done

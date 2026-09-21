@@ -1,0 +1,739 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-20 21:22:32 UTC",
+  "run_id": "testphp-vulnweb-com_f598",
+  "run_name": "testphp-vulnweb-com_f598",
+  "scope": {
+    "targets": [
+      {
+        "type": "web_application",
+        "details": {
+          "target_url": "https://testphp.vulnweb.com"
+        },
+        "original": "https://testphp.vulnweb.com"
+      }
+    ],
+    "scan_mode": "quick",
+    "scope_mode": "auto",
+    "diff_scope": {
+      "active": false,
+      "mode": "auto"
+    },
+    "instruction": ""
+  },
+  "summary": {
+    "surfaces_reviewed": 31,
+    "outcomes": {
+      "no_issue_found": 1,
+      "needs_follow_up": 30
+    },
+    "findings_filed": 0,
+    "gaps": 33
+  },
+  "machine_observed": {
+    "agents": [
+      {
+        "agent_id": "3b6ac1ef",
+        "agent_name": "Access Control & Auth Hunter",
+        "status": "completed",
+        "skills": [
+          "vulnerabilities/idor",
+          "vulnerabilities/broken_function_level_authorization",
+          "vulnerabilities/authentication_jwt",
+          "vulnerabilities/weak_password_detection"
+        ],
+        "task": "Authentication, authorization, IDOR, and session testing on https://testphp.vulnweb.com. Authorized black-box assessment.\n\nCall get_threat_model(\"https://testphp.vulnweb.com\") first.\n\nScope:\n1. login.php — try the widely published demo credential (test/test) and simple bypasses; inspect cookies set on login (name, flags: HttpOnly/Secure/SameSite), session predictability, and whether auth can be bypassed.\n2. userinfo.php — after login, check whether it can be accessed WITHOUT a valid session (forced browsing / missing auth), and whether it exposes other users' data.\n3. IDOR/BOLA — enumerate object references across the app: cart.php (cart item/user id), userinfo (user id), AJAX/info.php?id=, showimage.php?file=. Try incrementing/swapping ids and access as an unauthenticated / different user to see if other users' records are returned.\n4. signup.php — check for mass assignment / privilege fields, and whether account creation is abusable.\n5. Broken function-level authorization — any admin-ish or privileged action reachable without the required role.\n6. Session management — cookie reuse across logout, fixation, CSRF token presence on state-changing forms (login, signup, guestbook, cart).\n\nMethod: scripted requests via Python; compare responses authenticated vs unauthenticated vs alternate-id; look for content differences that prove access to another user's data or an action without authorization. Capture concrete PoC.\n\nWhen you have a CONFIRMED issue with working PoC, spawn a child \"AccessControl Validation\" agent to independently re-verify, which spawns an \"AccessControl Reporting\" agent that files via create_vulnerability_report.\n\nRecord coverage per surface. In agent_finish, report confirmed issues, ruled-out items (with the specific control), and open proof gaps (e.g. could not obtain a second account).",
+        "is_root": false
+      },
+      {
+        "agent_id": "5901a28d",
+        "agent_name": "Lean Surface Mapper",
+        "status": "completed",
+        "skills": [
+          "reconnaissance/asset_discovery",
+          "tooling/httpx",
+          "tooling/katana"
+        ],
+        "task": "Time-boxed (hard cap ~10 minutes) black-box attack-surface enumeration of https://testphp.vulnweb.com. Authorized assessment. Call get_threat_model(\"https://testphp.vulnweb.com\") first and build on it.\n\nDo NOT do long crawls. Keep it fast and bounded:\n1. httpx/nmap quick probe of the host (ports 80/443, server + X-Powered-By headers, title, tech).\n2. Enumerate the known PHP scripts and confirm which exist/return 200: index.php, categories.php, listproducts.php, product.php, artists.php, artist.php, art.php, cart.php, login.php, logout.php, signup.php, userinfo.php, guestbook.php, search.php, showimage.php, AJAX/info.php, images/, robots.txt. Use short curl/httpx loops (no deep recursion).\n3. For each existing endpoint, record its parameters (from links/forms on the page HTML) and whether it appears dynamic. Use arjun ONLY on 2-3 highest-value endpoints if time permits.\n4. Capture: Set-Cookie names, any verbose errors, directory listing, exposed files (.git, .bak, phpinfo.php, .htaccess).\n\nDELIVERABLE (must complete even if time-boxed):\n- create_note(category=\"wiki\", title=\"testphp.vulnweb.com attack-surface inventory\") with the endpoint/parameter/form/technology list and which files exist.\n- record_coverage for the recon surface (outcome no_issue_found or needs_follow_up as appropriate).\n- agent_finish with the inventory summary and a ranked list of candidate injection surfaces with raw evidence snippets.\n\nRecon only — do NOT send exploit payloads.",
+        "is_root": false
+      },
+      {
+        "agent_id": "8e2ac053",
+        "agent_name": "Reachability & Alternate Route Tester",
+        "status": "completed",
+        "skills": [
+          "tooling/nmap",
+          "tooling/httpx"
+        ],
+        "task": "Determine definitively whether the in-scope target https://testphp.vulnweb.com can be reached from this environment, and find a working route if one exists. Authorized assessment. Call get_threat_model(\"https://testphp.vulnweb.com\") first.\n\nContext: prior work shows DNS resolves (testphp.vulnweb.com -> 44.228.249.3) but TCP 80/443 connections time out (Caido proxy returns 502 cause=Timeout; direct curl also times out; nmap shows ports filtered). Other hosts (example.com, google.com, web.archive.org) reach out fine, so egress is not globally blocked.\n\nExhaustively test alternate reachability (bounded, ~10 min):\n1. Re-resolve via multiple resolvers (dig @8.8.8.8, @1.1.1.1, getent) and note every A/AAAA record. Test each IP directly with curl --resolve and Host header, both http:// and https:// (with -k).\n2. Try alternate ports: 8080, 8443, 8000, 443/80, and scan 1-1024 quickly with nmap -Pn -T4 on the resolved IP to see if ANY port responds.\n3. IPv6 (AAAA) if present.\n4. Try reaching via the proxy explicitly vs bypassing (unset http_proxy/https_proxy) and compare.\n5. Try alternate hostnames that may serve the same app: www.vulnweb.com, vulnweb.com, and https://www.vulnweb.com (note: only testphp.vulnweb.com is in scope for findings; others are reachability probes only — do NOT test their vulnerabilities).\n6. Check whether an HTTP request completes at all: measure connect vs TLS vs read timeouts; run curl -v and capture the exact failure stage and any TLS error. If a TLS handshake succeeds, that is a partial reachability signal.\n7. Try a couple of retries spaced out to rule out transient failure.\n\nDELIVERABLE:\n- record_coverage for \"target reachability\" with outcome (needs_follow_up if unreachable/no route, or note which route worked).\n- create_note with the exact commands and their outputs (the concrete evidence of reachable vs filtered).\n- agent_finish: state plainly REACHABLE (and the working route) or UNREACHABLE, with the raw evidence. If a route works, provide a ready-to-use curl/httpx command other agents can use.\n\nDo NOT send exploit payloads and do NOT test other hosts' vulnerabilities.",
+        "is_root": false
+      },
+      {
+        "agent_id": "19064262",
+        "agent_name": "Recon & Attack-Surface Mapper",
+        "status": "stopped",
+        "skills": [
+          "reconnaissance/asset_discovery",
+          "tooling/katana",
+          "tooling/httpx",
+          "tooling/nmap"
+        ],
+        "task": "Perform comprehensive black-box reconnaissance and attack-surface mapping of the in-scope target https://testphp.vulnweb.com (and any subdomains/in-scope hosts that resolve under vulnweb.com for this test app). This is an authorized security assessment.\n\nCall get_threat_model on \"https://testphp.vulnweb.com\" first (it will show found:false — that's expected).\n\nYour objectives:\n1. TECHNOLOGY FINGERPRINTING: identify web server, language (PHP likely), framework, CMS, versions where observable (headers, cookies, error pages, file extensions). Use httpx, nmap, wafw00f, whatweb-style checks.\n2. CRAWL & MAP: spider the whole app (katana and/or gospider, bounded depth ~4). Enumerate every page, endpoint, parameter, form (GET/POST), and file. Capture: index.php, listproducts.php, product.php, artists.php, categories.php, art.php, cart.php, login.php, signup.php, userinfo.php, logout.php, search.php, guestbook.php, showimage.php, AJAX/*, and any admin/setup/phpinfo/test files.\n3. PARAMETER ENUMERATION: for each dynamic endpoint, list its parameters (e.g. ?cat=, ?pic=, ?artist=, ?artist=, ?test=, ?id=, ?file=, ?searchFor=). Use arjun where static crawl misses params.\n4. FORMS & INPUTS: document every HTML form (action, method, field names), cookies (e.g. login), and session behavior.\n5. JS ANALYSIS: fetch and inspect any JS files for endpoints, hidden parameters, API calls, tokens.\n6. Note HTTP methods, response codes, interesting headers (Server, X-Powered-By, Set-Cookie), robots.txt, and any backup/config/source files exposed (.git, .bak, phpinfo.php, etc.).\n\nKeep output BOUNDED — extract the endpoint/parameter inventory and discard raw crawl dumps. \n\nDELIVERABLE: \n- Write a concise endpoint/parameter/form inventory to a shared note (create_note, category \"wiki\") titled \"testphp.vulnweb.com attack-surface inventory\".\n- Record coverage for the recon surface (record_coverage).\n- In agent_finish, report: full list of endpoints with parameters, forms, technologies/versions, cookies, and your top-10 ranked candidate injection/attack surfaces (which param on which endpoint looks most promising for SQLi, XSS, IDOR, LFI, etc.) with the raw evidence (request/response snippets) that supports each.\n\nDo NOT run exploit payloads — that is other agents' jobs. Recon/mapping only.",
+        "is_root": false
+      },
+      {
+        "agent_id": "64036ed4",
+        "agent_name": "Root Agent",
+        "status": "completed",
+        "skills": [],
+        "task": "\n\nURLs: - https://testphp.vulnweb.com",
+        "is_root": true
+      },
+      {
+        "agent_id": "eb79f4b2",
+        "agent_name": "SQLi Hunter",
+        "status": "completed",
+        "skills": [
+          "vulnerabilities/sql_injection",
+          "tooling/sqlmap"
+        ],
+        "task": "SQL injection discovery and proof on the in-scope target https://testphp.vulnweb.com. Authorized black-box assessment.\n\nCall get_threat_model(\"https://testphp.vulnweb.com\") first.\n\nScope: every attacker-controllable parameter that reaches a query. Prioritize:\n- listproducts.php?cat=\n- artists.php?artist=  and any artist/product lookup\n- art.php, product.php?pic= , categories.php\n- AJAX/info.php?id=\n- search.php (and searchFor / test params)\n- login.php (un/pass) — test for auth-bypass SQLi\n- cart.php add-to-cart params\nAlso discover params independently (arjun) on endpoints the surface inventory may miss.\n\nMethod: start with manual/scripted differential probes (single quote, boolean TRUE/FALSE pairs, arithmetic, comment styles, error-based) to detect injection, THEN use sqlmap (non-interactive, --batch, safe/level config) to confirm and enumerate (current db, tables, sample columns). Prefer proof over volume: for each confirmed injection, capture a minimal reproducible PoC (request + response snippet showing data extraction or boolean differential). For login.php, demonstrate an authentication bypass (e.g. ' OR 1=1-- ) if achievable.\n\nWhen you have a CONFIRMED, reproducible SQLi (working PoC), spawn a dedicated child \"SQLi Validation\" agent to independently re-verify it from scratch, and have that validation agent spawn a \"SQLi Reporting\" agent that files the report via create_vulnerability_report. Do not file the report yourself from the discovery step unless you are the validation/reporting stage.\n\nRecord coverage per endpoint+param you tested. In agent_finish, report which params are injected (with PoC), which are ruled out (and the control/reason), and any open proof gaps.",
+        "is_root": false
+      },
+      {
+        "agent_id": "7223c0e7",
+        "agent_name": "SQLi Validation (listproducts/artists)",
+        "status": "stopped",
+        "skills": [
+          "sql_injection",
+          "sqlmap"
+        ],
+        "task": "Independently validate SQL injection on https://testphp.vulnweb.com (black-box, authorized). Target is currently GLOBALLY DOWN — confirm that yourself first, then validate via archived RAW responses from the SAME host.\n\nSTEP 0 — confirm reachability yourself:\n  - Sandbox direct: `curl -s --noproxy '*' -m 20 -o /dev/null -w '%{http_code}\\n' https://testphp.vulnweb.com/index.php` (expect timeout/000).\n  - Via Caido proxy (default env): expect 502 \"Timeout\". Also try `curl -s -m 30 -H 'Accept: application/json' https://check-host.net/check-http?host=https://testphp.vulnweb.com/&max_nodes=4` then poll `https://check-host.net/check-result/<id>` to show multi-vantage timeout.\n  - If (and only if) the host ANSWERS live, do a real live validation instead (see STEP 2) and skip the archive path.\n\nSTEP 1 — independently re-verify the archived evidence FROM SCRATCH (do not trust prior files; re-fetch with your own curl/python). Use Wayback RAW snapshots (`/web/<ts>id_/<original-url>`). Fetch and print the content region for:\n  A) http://testphp.vulnweb.com/listproducts.php?cat=123'   ts=20230514050754\n     Expect (app's own output): \"Error: You have an error in your SQL syntax; ... near ''' at line 1\" + \"Warning: mysql_fetch_array() ... in /hj/var/www/listproducts.php on line 74\".\n  B) .../listproducts.php?cat=2+order+by+11--+  ts=20170512010921  -> normal listing (11 columns)\n     .../listproducts.php?cat=2+order+by+12--+  ts=20170515093925  -> \"Error: Unknown column '12' in 'order clause'\"\n  C) http://testphp.vulnweb.com/artists.php?artist='   ts=20260211111051  -> SQL syntax error near '''\n  D) http://testphp.vulnweb.com/artists.php?artist=-1%20union%20select%201,%20table_name,%203%20from%20information_schema.tables%20WHERE%20table_schema%20=%20database%20(),%203   ts=20210602180839\n     Expect the page to render  <h2 id='pageName'>artist: artists</h2>  (the injected table_name was extracted/reflected) plus \"<p>3</p>\".\n  Also a baseline: .../listproducts.php?cat=2 (ts 20140709224422) -> \"Paintings\"; .../artists.php?artist=1 -> \"r4w3...\" (artist name).\n  Notes: the Caido proxy caps upstream at ~10s, so archive calls intermittently 502 — RETRY several times. Confirm the exact error strings yourself, and note the snapshot timestamps.\n\nSTEP 2 — IF the host recovers (poll it): run real live probes and sqlmap, e.g.\n  - `curl -s 'https://testphp.vulnweb.com/listproducts.php?cat=2%20order%20by%2012--'` -> look for SQL error\n  - `python3 /usr/share/... ` no: use `sqlmap -u 'https://testphp.vulnweb.com/listproducts.php?cat=2' -p cat --batch --level 3 --risk 2 --technique=BEUT --current-db --flush-session` and similar for `artists.php?artist=1`.\n  A live success should upgrade the report to confidence high.\n\nClose each parameter as confirmed / ruled_out / open_proof_gap with the specific control or gap.\n\nDELIVERABLE: If the injectability is genuinely supported (SQL error and/or UNION extraction reproduced), spawn a child named \"SQLi Reporting (listproducts/artists)\" with skills [\"sql_injection\"] and instruct it to file the finding(s) with create_vulnerability_report using the archived PoC evidence + honest confidence (medium if live target stayed down; high only if you reproduced live). If the evidence does NOT hold up, do not report — finish with what you found.\n\nReport the exact strings you reproduced and their source timestamps in your final summary.",
+        "is_root": false
+      },
+      {
+        "agent_id": "5d2526c7",
+        "agent_name": "Traversal & Disclosure Hunter",
+        "status": "completed",
+        "skills": [
+          "vulnerabilities/path_traversal_lfi_rfi",
+          "vulnerabilities/information_disclosure",
+          "vulnerabilities/insecure_file_uploads"
+        ],
+        "task": "Path traversal / LFI, file upload, and information-disclosure testing on https://testphp.vulnweb.com. Authorized black-box assessment.\n\nCall get_threat_model(\"https://testphp.vulnweb.com\") first.\n\nScope:\n1. Path traversal / LFI — test file/path parameters: product.php?pic= , showimage.php?file= , any include-like param, and any file/folder query params. Payloads: ../../../../etc/passwd, ....//, ..%2f, %2e%2e%2f, absolute /etc/passwd, php://filter wrappers, null-byte variants. Confirm by retrieving real file content (e.g. /etc/passwd:root:x:0:0). Also test whether traversal lets you read application source (e.g. ../index.php) which reveals further vulns.\n2. Unrestricted file upload — if any file upload exists (avatar/profile/art), test extension/content-type bypass.\n3. Information disclosure — check for phpinfo.php, .git/, .htaccess, backup files (*.bak, *.old, *.txt), directory listing, verbose SQL/PHP error messages that leak paths/versions/credentials, and any source disclosure. Confirm any exposed file by retrieving it.\n4. Check robots.txt, sitemap, and common sensitive paths with a bounded ffuf/dirsearch wordlist.\n\nMethod: scripted requests; for traversal, diff baseline vs traversal responses and require real file bytes as proof. For disclosure, require the actual sensitive content as proof.\n\nWhen you have a CONFIRMED issue with working PoC, spawn a child \"Traversal Validation\" agent to independently re-verify, which spawns a \"Traversal Reporting\" agent that files via create_vulnerability_report.\n\nRecord coverage per surface (including clean ones). In agent_finish, report confirmed issues with PoC, ruled-out items with the specific control, and open proof gaps.",
+        "is_root": false
+      },
+      {
+        "agent_id": "f22341f6",
+        "agent_name": "XSS Hunter",
+        "status": "completed",
+        "skills": [
+          "vulnerabilities/xss",
+          "vulnerabilities/browser_security",
+          "tooling/agent_browser"
+        ],
+        "task": "Cross-site scripting discovery and proof on https://testphp.vulnweb.com. Authorized black-box assessment.\n\nCall get_threat_model(\"https://testphp.vulnweb.com\") first.\n\nScope (test both reflected and stored, plus DOM):\n- search.php (searchFor / test params) and any search reflection\n- guestbook.php — submit a payload and check if it is stored and returned unescaped to other visitors (stored XSS)\n- product.php?pic= , listproducts.php?cat= , artists.php?artist= — reflected parameter reflection\n- signup.php / userinfo.php / login.php form fields (reflection or stored in profile)\n- Any JS-driven page for DOM-based XSS (inspect JS for document.write/innerHTML sinks and location sources).\n\nMethod: spray payloads via a script (Python requests) with a unique canary per injection point; detect reflection and whether it lands in an HTML body / attribute / script context unescaped. Use a mix: <script>, <img src=x onerror=...>, \"><svg onload=...>, and attribute-break variants. Confirm actual JS execution in a real browser using agent-browser (own session; check dialog/JS execution) for at least the strongest candidate per finding. Distinguish real execution from harmless reflection.\n\nWhen you have a CONFIRMED XSS with working PoC (payload executes in browser), spawn a child \"XSS Validation\" agent to independently re-verify, and have it spawn an \"XSS Reporting\" agent that files via create_vulnerability_report. \n\nRecord coverage per surface. In agent_finish, report confirmed vs reflected-only vs ruled-out, with PoC evidence.",
+        "is_root": false
+      }
+    ],
+    "skills_exercised": [
+      "agent_browser",
+      "asset_discovery",
+      "authentication_jwt",
+      "broken_function_level_authorization",
+      "browser_security",
+      "httpx",
+      "idor",
+      "information_disclosure",
+      "insecure_file_uploads",
+      "katana",
+      "nmap",
+      "path_traversal_lfi_rfi",
+      "sql_injection",
+      "sqlmap",
+      "weak_password_detection",
+      "xss"
+    ],
+    "findings_filed": 0,
+    "source": "runtime"
+  },
+  "completeness": {
+    "complete": false,
+    "scan_status": "completed",
+    "exit_reason": "finished_by_tool",
+    "caveats": [
+      "2 agent(s) did not finish cleanly (Recon & Attack-Surface Mapper, SQLi Validation (listproducts/artists)); any surface they held is under-covered."
+    ]
+  },
+  "entries": [
+    {
+      "surface": "https://testphp.vulnweb.com (whole-host attack surface)",
+      "risk_area": "Attack-surface / endpoint &amp; parameter enumeration",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Live host unreachable from sandbox: DNS resolves to 44.228.249.3 (AWS us-west-2) but TCP 80/443 are filtered; proxy returns Caido 502 with cause 'Timeout' (~10s) and direct curl times out (20s); no response ever captured in proxy history (all response:null). Surface mapped instead from Wayback CDX + archived snapshots: ~24 core PHP scripts, /AJAX/, /Mod_Rewrite_Shop/, /hpp/, plus sensitive paths (/.idea/, /CVS/, /Connections/DB_Connection.php, /admin/create.sql, /_mmServerScripts/MMHTTPDB.php, /index.bak, /index.zip, /bxss/). 50+ query params enumerated; verbose PHP errors leak /hj/var/www path. Live validation of existence, cookies, and injection behavior blocked by reachability.",
+      "recorded_by": "Lean Surface Mapper",
+      "recorded_at": "2026-09-20 20:55:21 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /login.php (auth, credentials, session cookie)",
+      "risk_area": "Authentication bypass / weak credentials / session cookie flags",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable: TCP 80/443 filtered (nmap no-response), Caido proxy 502 Timeout, and independent fetchers (r.jina.ai, Google translate proxy, archive.org SPN) also timeout while controls (example.com) succeed. Could not send any login request, so test/test, bypasses, and Set-Cookie flags (HttpOnly/Secure/SameSite) remain untested.",
+      "recorded_by": "Access Control & Auth Hunter",
+      "recorded_at": "2026-09-20 21:00:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "GET/POST /userinfo.php (forced browsing / missing auth)",
+      "risk_area": "Missing authentication / forced browsing / cross-user data exposure",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable (TCP 80/443 filtered; proxy and independent fetchers timeout). Could not issue authenticated vs unauthenticated requests, so whether userinfo.php renders another user's data without a valid session is untested.",
+      "recorded_by": "Access Control & Auth Hunter",
+      "recorded_at": "2026-09-20 21:00:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "cart.php / userinfo.php / AJAX/info.php?id= / showimage.php?file= (object references)",
+      "risk_area": "IDOR / BOLA (cross-user object access)",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable; no live requests possible. ID increment/swap and alternate-user comparisons could not be performed. Note: these params may also be SQLi/traversal sinks (owned by sibling agents).",
+      "recorded_by": "Access Control & Auth Hunter",
+      "recorded_at": "2026-09-20 21:00:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /signup.php -> /secured/newuser.php",
+      "risk_area": "Mass assignment / privilege fields / account-creation abuse",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable. Archived HTML shows fixed fields uuname/upass/upass2/uemail/urname/uphone/ucc with no role field, but server-side binding and whether signup is truly disabled could not be verified live.",
+      "recorded_by": "Access Control & Auth Hunter",
+      "recorded_at": "2026-09-20 21:00:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "Privileged/admin actions reachable without role (BFLA)",
+      "risk_area": "Broken function-level authorization",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable; no endpoint enumeration or role-differentiated requests possible. No distinct admin role known from archived HTML (/secured/ path exists but untested).",
+      "recorded_by": "Access Control & Auth Hunter",
+      "recorded_at": "2026-09-20 21:00:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "Session management (logout, fixation, CSRF tokens on login/signup/guestbook/cart)",
+      "risk_area": "Session fixation / cookie reuse after logout / CSRF",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable; could not obtain a session cookie, log out, or inspect state-changing forms live. Archived forms show no CSRF token (unverified).",
+      "recorded_by": "Access Control & Auth Hunter",
+      "recorded_at": "2026-09-20 21:00:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/showimage.php?file= and product.php?pic= (file/path parameters)",
+      "risk_area": "Path traversal / LFI (arbitrary file read)",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Could not execute: live host unreachable from sandbox (DNS 44.228.249.3; every request returns proxy 502/Caido 'Timeout' page after ~10s; direct egress blocked; 12 sequential attempts + http1.0/http2/https-IP/port-sweep all timeout). Ready harness at /workspace/trav/probe.py with differential baseline-vs-payload proof rule. Gap: no live reachability, so no traversal result confirmed or ruled out.",
+      "recorded_by": "Traversal & Disclosure Hunter",
+      "recorded_at": "2026-09-20 21:02:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/index.php?cmd= (include/eval-like parameter)",
+      "risk_area": "Path traversal / LFI / local file inclusion into interpreter",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Could not execute: host unreachable (proxy 502/Caido Timeout page, ~10s, consistent). Harness covers index.php?cmd= with traversal + php://filter payloads. Gap: no live reachability to confirm or rule out inclusion.",
+      "recorded_by": "Traversal & Disclosure Hunter",
+      "recorded_at": "2026-09-20 21:02:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com information-disclosure artifacts (phpinfo.php, .git/, .env, .htaccess, backups *.bak/*.zip, Connections/DB_Connection.php, admin/create.sql, _mmServerScripts/, .idea/, CVS/, dir listing, verbose PHP errors)",
+      "risk_area": "Information disclosure / source &amp; secret exposure",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Could not execute: host unreachable from sandbox (proxy Caido 502 'Timeout' on every path; proxy healthy for other hosts so failure is target-specific). Check list and PHP-source/artifact content checks are implemented in /workspace/trav/probe.py. Archived hints exist but are not live evidence. Gap: no reachability, so exposure neither confirmed nor ruled out.",
+      "recorded_by": "Traversal & Disclosure Hunter",
+      "recorded_at": "2026-09-20 21:02:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com file-upload surfaces (signup.php, userinfo.php, guestbook.php, comment.php, /secured/newuser.php)",
+      "risk_area": "Unrestricted file upload / extension &amp; content-type bypass",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Could not execute: host unreachable (proxy Caido 502 'Timeout' page, ~10s, consistent across 12+ attempts). Harness enumerates multipart/file inputs on these pages. Gap: upload endpoints never fetched live, so presence/absence and validation behaviour unverified.",
+      "recorded_by": "Traversal & Disclosure Hunter",
+      "recorded_at": "2026-09-20 21:02:09 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com (host 44.228.249.3)",
+      "risk_area": "Target reachability / network availability",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "UNREACHABLE — no route exists. DNS resolves consistently to 44.228.249.3 (no AAAA) via local resolver, 8.8.8.8, and 1.1.1.1. TCP 80/443 connect times out from this sandbox (direct and via Caido proxy, which returns 502 cause=Timeout after its 10s upstream limit). nmap -Pn -T4 shows 0 open ports across 1-1024 plus 8080/8443/8000/8081/8888/3000/5000/9000. Aliases www.vulnweb.com and vulnweb.com resolve to the same IP and time out identically. Egress is NOT the cause: google.com, example.com, and AWS us-west-2 endpoints (s3/dynamodb/ec2) all connect fine. Multi-node external confirmation via check-host.net: all 12 global nodes (CA, ES, HK, IL, IR, IT, JP, RU x2, TR, UA, UK) report \"Connection timed out\" on TCP 443, and all 12 nodes (incl. US node us4) on TCP 80. Independent external fetchers also fail: r.jina.ai \"upstream connect error ... connection termination\", api.allorigins.win HTTP 408, api.codetabs.com HTTP 522. Conclusion: the origin server is globally down/filtered, not a local egress restriction. No working route (no alternate IPs, ports, hostnames, IPv6, or proxy path).",
+      "recorded_by": "Reachability & Alternate Route Tester",
+      "recorded_at": "2026-09-20 21:03:56 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/search.php (params: test, searchFor)",
+      "risk_area": "Reflected XSS",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target globally unreachable (TCP 80/443 filtered; Caido 502 Timeout; 24+ global nodes + external fetchers all time out). No live request could be sent, so reflection/encoding context of `test`/`searchFor` was never observed. Archived base page (Wayback 2025) shows form posts searchFor to search.php?test=query and the content region is server-rendered (classic reflection surface). Harness ready at /workspace/xss/harness.py. Gap: no live reachability.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:12:21 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/guestbook.php (name hidden field, text/submit)",
+      "risk_area": "Stored XSS",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable; could not POST an entry or re-fetch as another visitor. Archived snapshot (Wayback 20251103072058) of guestbook.php shows entries rendered server-side via `<strong>{name}</strong>` + text and a form posting hidden name + textarea — a plausible stored-XSS render sink — but no live submission/rendering could be verified. GET `?name=<script>` snapshot showed the value NOT reflected (one archived negative data point only). Gap: no live submit/echo test.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:12:21 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/comment.php (name, comment, phpaction, aid)",
+      "risk_area": "Stored / reflected XSS",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable. Archived comment.php form (Wayback) shows `name` input and `comment` textarea posting to comment.php with hidden field literally `value=\"echo $_POST[comment];\"`, and CDX shows comment.php?aid= returns an identical digest for aid=1/-1/'x' (aid not reflected in the visible page). Whether name/comment are stored and re-rendered unescaped elsewhere could not be tested live. Gap: no live submit/echo.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:12:25 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/product.php?pic= and listproducts.php?cat/artist",
+      "risk_area": "Reflected XSS",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable. CDX confirms historical scanner traffic with `<script>alert(\"XSS\")</script>` UNION payloads against product.php?pic= and listproducts.php?cat=, but archived base pages do not show the server-side reflection context and no live request could be made. Gap: reflect/encode context unverified.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:12:25 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/artists.php?artist=",
+      "risk_area": "Reflected XSS",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable. Archived artists.php renders DB-derived artist names into a server-side `<div class='story'>` block and links `artists.php?artist=N`; no live payload could be reflected. Gap: no live reachability.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:12:25 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/signup.php / userinfo.php / login.php form fields",
+      "risk_area": "Reflected / stored XSS (form fields)",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable. Archived signup.php form posts fixed fields (uuname/upass/upass2/uemail/urname/uphone/ucc) to /secured/newuser.php; login.php posts to userinfo.php. No live submit or re-render could be observed to determine if any field is reflected/stored unescaped. Gap: no live reachability.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:12:25 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/AJAX/index.php (innerHTML sinks) + AJAX/infoartist.php|infocateg.php|infotitle.php|showxml.php",
+      "risk_area": "DOM-based XSS (innerHTML sinks, XML/AJAX sources)",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable. Static review of the archived AJAX/index.php (retrieved from Wayback) shows DOM XSS sinks: SetContent()/SetInfo() build HTML strings from XML node values and assign to `document.getElementById('contentDiv').innerHTML` / `infoDiv.innerHTML`, and xmlCompleted() does `xd.innerHTML = httpreq.responseText` from POST showxml.php. Inputs are DB/XML-derived (AJAX/infoartist.php|infocateg.php|infotitle.php) rather than directly attacker-controlled, so exploitability depends on whether an unauthenticated user can write into those DB fields — could not be tested live. Gap: no live DOM/DB-write test.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:12:29 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/hpp/params.php (p, pp, aaaa/) and hpp/index.php (pp)",
+      "risk_area": "Reflected XSS (incl. HTTP parameter pollution)",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable. CDX confirms historical `<scRipt>alert(...)`, `\"><img src=x onerror=alert(1)>` and `pp=\" onmouseover=` payload URLs were archived against hpp/params.php (p, pp, aaaa/) and hpp/index.php (pp), but the snapshot responses could not be reliably retrieved (Wayback rate-limited/bot-flagged) and no live request was possible. Gap: no live reachability.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:12:29 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com/Mod_Rewrite_Shop/details.php?id= (also buy.php?id, rate.php?id)",
+      "risk_area": "Reflected XSS",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Target unreachable. CDX confirms historical `details.php?id=\"><img src=x onerror=alert(1)>` and `EXTRACTVALUE(` payload URLs returned 200; attempts to retrieve the archived snapshot returned the Wayback 'not archived/rate-limited' page, and no live request could be made. Gap: reflection/encoding context unverified.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:12:29 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "listproducts.php?cat=",
+      "risk_area": "SQL injection",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Archived target response (Wayback id_ ts 20230514050754) to cat=123' shows \"You have an error in your SQL syntax ... near '''\" and mysql_fetch_array() warning at /hj/var/www/listproducts.php line 74; ts 20170515093925 cat=2 order by 12-- shows \"Unknown column '12' in 'order clause'\" (11 columns). Live target down so evidence is archived, not re-executed.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:17:30 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "artists.php?artist=",
+      "risk_area": "SQL injection",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Archived target response (Wayback id_ ts 20260211111051) to artist=' shows \"You have an error in your SQL syntax ... near '''\"; ts 20210602180839 union select 1, table_name, 3 from information_schema.tables rendered \"artist: artists\" (extracted table_name) — UNION extraction. Live target down so archived evidence.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:17:30 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "AJAX/infoartist.php?id=",
+      "risk_area": "SQL injection",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Archived responses show mysql_fetch_array() boolean-given warnings emitted from /hj/var/www/AJAX/infoartist.php line 7 and infotitle.php line 5 when 'id' is supplied — query built from $_GET[id]. No extraction captured yet; live target down.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:17:30 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "product.php?pic=",
+      "risk_area": "SQL injection",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "product.php?pic= archived 200 snapshots exist for quote/OR payloads (e.g. ts 20230803024400 pic=1 OR 17-7=10CONFIRMED; ts 20250507131251 pic=6'&gt=). Could not fetch body reliably through 10s proxy cap; not yet confirmed. Live target down.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:17:30 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "login.php (un/pass)",
+      "risk_area": "SQL injection",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Live target globally unreachable (sandbox direct, Caido proxy/replay 10s timeout, 3 external CORS fetchers, check-host.net nodes time out on 80/443). Archived raw snapshots show unescaped single quote producing a MySQL syntax error and an ORDER BY column-count boundary at listproducts.php line 74; also a UNION-based extraction of information_schema table_name reflected as \"artist: artists\". Per root-agent direction, no report filed from archived data — candidate left open pending a live target.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:19:07 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "search.php (searchFor/test)",
+      "risk_area": "SQL injection",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Could not test live — host globally unreachable. search form POSTs searchFor to search.php?test=query (form observed in archived category/artist pages); no archived injectable snapshot analyzed before wrap-up.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:19:07 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "cart.php add-to-cart params",
+      "risk_area": "SQL injection",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Could not test live — host globally unreachable. Cart add/remove params not exercised; no archived injectable snapshot analyzed.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:19:07 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "categories.php",
+      "risk_area": "SQL injection",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Could not test live — host globally unreachable. categories.php itself lists listproducts.php?cat=1..4 statically (no DB param); the linked cat param is covered under listproducts.php.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:19:07 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "art.php / artist.php lookups",
+      "risk_area": "SQL injection",
+      "outcome": "needs_follow_up",
+      "outcome_label": "Requires further review",
+      "evidence": "Could not test live — host globally unreachable (no live request ever completed in scan proxy history). art.php/artist.php surfaces not reached.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:19:07 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "https://testphp.vulnweb.com (whole host)",
+      "risk_area": "Host availability / reachability",
+      "outcome": "no_issue_found",
+      "outcome_label": "No issue identified",
+      "evidence": "Confirmed unreachable from every vantage point: direct egress timeout to 44.228.249.3:80/443, Caido proxy 502 after fixed ~10s, Caido replay 30s timeout, api.allorigins.win 5xx, api.codetabs.com 522, r.jina.ai 422 timeout, and check-host.net nodes (AT/BG/CA/IR/RU/UA) report \"Connection timed out\" on HTTP. No request in the shared Caido history ever received a response.",
+      "recorded_by": "SQLi Hunter",
+      "recorded_at": "2026-09-20 21:19:07 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    }
+  ],
+  "gaps": [
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com (whole-host attack surface)",
+      "risk_area": "Attack-surface / endpoint &amp; parameter enumeration",
+      "detail": "Live host unreachable from sandbox: DNS resolves to 44.228.249.3 (AWS us-west-2) but TCP 80/443 are filtered; proxy returns Caido 502 with cause 'Timeout' (~10s) and direct curl times out (20s); no response ever captured in proxy history (all response:null). Surface mapped instead from Wayback CDX + archived snapshots: ~24 core PHP scripts, /AJAX/, /Mod_Rewrite_Shop/, /hpp/, plus sensitive paths (/.idea/, /CVS/, /Connections/DB_Connection.php, /admin/create.sql, /_mmServerScripts/MMHTTPDB.php, /index.bak, /index.zip, /bxss/). 50+ query params enumerated; verbose PHP errors leak /hj/var/www path. Live validation of existence, cookies, and injection behavior blocked by reachability."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "POST /login.php (auth, credentials, session cookie)",
+      "risk_area": "Authentication bypass / weak credentials / session cookie flags",
+      "detail": "Target unreachable: TCP 80/443 filtered (nmap no-response), Caido proxy 502 Timeout, and independent fetchers (r.jina.ai, Google translate proxy, archive.org SPN) also timeout while controls (example.com) succeed. Could not send any login request, so test/test, bypasses, and Set-Cookie flags (HttpOnly/Secure/SameSite) remain untested."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "GET/POST /userinfo.php (forced browsing / missing auth)",
+      "risk_area": "Missing authentication / forced browsing / cross-user data exposure",
+      "detail": "Target unreachable (TCP 80/443 filtered; proxy and independent fetchers timeout). Could not issue authenticated vs unauthenticated requests, so whether userinfo.php renders another user's data without a valid session is untested."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "cart.php / userinfo.php / AJAX/info.php?id= / showimage.php?file= (object references)",
+      "risk_area": "IDOR / BOLA (cross-user object access)",
+      "detail": "Target unreachable; no live requests possible. ID increment/swap and alternate-user comparisons could not be performed. Note: these params may also be SQLi/traversal sinks (owned by sibling agents)."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "POST /signup.php -> /secured/newuser.php",
+      "risk_area": "Mass assignment / privilege fields / account-creation abuse",
+      "detail": "Target unreachable. Archived HTML shows fixed fields uuname/upass/upass2/uemail/urname/uphone/ucc with no role field, but server-side binding and whether signup is truly disabled could not be verified live."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "Privileged/admin actions reachable without role (BFLA)",
+      "risk_area": "Broken function-level authorization",
+      "detail": "Target unreachable; no endpoint enumeration or role-differentiated requests possible. No distinct admin role known from archived HTML (/secured/ path exists but untested)."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "Session management (logout, fixation, CSRF tokens on login/signup/guestbook/cart)",
+      "risk_area": "Session fixation / cookie reuse after logout / CSRF",
+      "detail": "Target unreachable; could not obtain a session cookie, log out, or inspect state-changing forms live. Archived forms show no CSRF token (unverified)."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/showimage.php?file= and product.php?pic= (file/path parameters)",
+      "risk_area": "Path traversal / LFI (arbitrary file read)",
+      "detail": "Could not execute: live host unreachable from sandbox (DNS 44.228.249.3; every request returns proxy 502/Caido 'Timeout' page after ~10s; direct egress blocked; 12 sequential attempts + http1.0/http2/https-IP/port-sweep all timeout). Ready harness at /workspace/trav/probe.py with differential baseline-vs-payload proof rule. Gap: no live reachability, so no traversal result confirmed or ruled out."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/index.php?cmd= (include/eval-like parameter)",
+      "risk_area": "Path traversal / LFI / local file inclusion into interpreter",
+      "detail": "Could not execute: host unreachable (proxy 502/Caido Timeout page, ~10s, consistent). Harness covers index.php?cmd= with traversal + php://filter payloads. Gap: no live reachability to confirm or rule out inclusion."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com information-disclosure artifacts (phpinfo.php, .git/, .env, .htaccess, backups *.bak/*.zip, Connections/DB_Connection.php, admin/create.sql, _mmServerScripts/, .idea/, CVS/, dir listing, verbose PHP errors)",
+      "risk_area": "Information disclosure / source &amp; secret exposure",
+      "detail": "Could not execute: host unreachable from sandbox (proxy Caido 502 'Timeout' on every path; proxy healthy for other hosts so failure is target-specific). Check list and PHP-source/artifact content checks are implemented in /workspace/trav/probe.py. Archived hints exist but are not live evidence. Gap: no reachability, so exposure neither confirmed nor ruled out."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com file-upload surfaces (signup.php, userinfo.php, guestbook.php, comment.php, /secured/newuser.php)",
+      "risk_area": "Unrestricted file upload / extension &amp; content-type bypass",
+      "detail": "Could not execute: host unreachable (proxy Caido 502 'Timeout' page, ~10s, consistent across 12+ attempts). Harness enumerates multipart/file inputs on these pages. Gap: upload endpoints never fetched live, so presence/absence and validation behaviour unverified."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com (host 44.228.249.3)",
+      "risk_area": "Target reachability / network availability",
+      "detail": "UNREACHABLE — no route exists. DNS resolves consistently to 44.228.249.3 (no AAAA) via local resolver, 8.8.8.8, and 1.1.1.1. TCP 80/443 connect times out from this sandbox (direct and via Caido proxy, which returns 502 cause=Timeout after its 10s upstream limit). nmap -Pn -T4 shows 0 open ports across 1-1024 plus 8080/8443/8000/8081/8888/3000/5000/9000. Aliases www.vulnweb.com and vulnweb.com resolve to the same IP and time out identically. Egress is NOT the cause: google.com, example.com, and AWS us-west-2 endpoints (s3/dynamodb/ec2) all connect fine. Multi-node external confirmation via check-host.net: all 12 global nodes (CA, ES, HK, IL, IR, IT, JP, RU x2, TR, UA, UK) report \"Connection timed out\" on TCP 443, and all 12 nodes (incl. US node us4) on TCP 80. Independent external fetchers also fail: r.jina.ai \"upstream connect error ... connection termination\", api.allorigins.win HTTP 408, api.codetabs.com HTTP 522. Conclusion: the origin server is globally down/filtered, not a local egress restriction. No working route (no alternate IPs, ports, hostnames, IPv6, or proxy path)."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/search.php (params: test, searchFor)",
+      "risk_area": "Reflected XSS",
+      "detail": "Target globally unreachable (TCP 80/443 filtered; Caido 502 Timeout; 24+ global nodes + external fetchers all time out). No live request could be sent, so reflection/encoding context of `test`/`searchFor` was never observed. Archived base page (Wayback 2025) shows form posts searchFor to search.php?test=query and the content region is server-rendered (classic reflection surface). Harness ready at /workspace/xss/harness.py. Gap: no live reachability."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/guestbook.php (name hidden field, text/submit)",
+      "risk_area": "Stored XSS",
+      "detail": "Target unreachable; could not POST an entry or re-fetch as another visitor. Archived snapshot (Wayback 20251103072058) of guestbook.php shows entries rendered server-side via `<strong>{name}</strong>` + text and a form posting hidden name + textarea — a plausible stored-XSS render sink — but no live submission/rendering could be verified. GET `?name=<script>` snapshot showed the value NOT reflected (one archived negative data point only). Gap: no live submit/echo test."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/comment.php (name, comment, phpaction, aid)",
+      "risk_area": "Stored / reflected XSS",
+      "detail": "Target unreachable. Archived comment.php form (Wayback) shows `name` input and `comment` textarea posting to comment.php with hidden field literally `value=\"echo $_POST[comment];\"`, and CDX shows comment.php?aid= returns an identical digest for aid=1/-1/'x' (aid not reflected in the visible page). Whether name/comment are stored and re-rendered unescaped elsewhere could not be tested live. Gap: no live submit/echo."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/product.php?pic= and listproducts.php?cat/artist",
+      "risk_area": "Reflected XSS",
+      "detail": "Target unreachable. CDX confirms historical scanner traffic with `<script>alert(\"XSS\")</script>` UNION payloads against product.php?pic= and listproducts.php?cat=, but archived base pages do not show the server-side reflection context and no live request could be made. Gap: reflect/encode context unverified."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/artists.php?artist=",
+      "risk_area": "Reflected XSS",
+      "detail": "Target unreachable. Archived artists.php renders DB-derived artist names into a server-side `<div class='story'>` block and links `artists.php?artist=N`; no live payload could be reflected. Gap: no live reachability."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/signup.php / userinfo.php / login.php form fields",
+      "risk_area": "Reflected / stored XSS (form fields)",
+      "detail": "Target unreachable. Archived signup.php form posts fixed fields (uuname/upass/upass2/uemail/urname/uphone/ucc) to /secured/newuser.php; login.php posts to userinfo.php. No live submit or re-render could be observed to determine if any field is reflected/stored unescaped. Gap: no live reachability."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/AJAX/index.php (innerHTML sinks) + AJAX/infoartist.php|infocateg.php|infotitle.php|showxml.php",
+      "risk_area": "DOM-based XSS (innerHTML sinks, XML/AJAX sources)",
+      "detail": "Target unreachable. Static review of the archived AJAX/index.php (retrieved from Wayback) shows DOM XSS sinks: SetContent()/SetInfo() build HTML strings from XML node values and assign to `document.getElementById('contentDiv').innerHTML` / `infoDiv.innerHTML`, and xmlCompleted() does `xd.innerHTML = httpreq.responseText` from POST showxml.php. Inputs are DB/XML-derived (AJAX/infoartist.php|infocateg.php|infotitle.php) rather than directly attacker-controlled, so exploitability depends on whether an unauthenticated user can write into those DB fields — could not be tested live. Gap: no live DOM/DB-write test."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/hpp/params.php (p, pp, aaaa/) and hpp/index.php (pp)",
+      "risk_area": "Reflected XSS (incl. HTTP parameter pollution)",
+      "detail": "Target unreachable. CDX confirms historical `<scRipt>alert(...)`, `\"><img src=x onerror=alert(1)>` and `pp=\" onmouseover=` payload URLs were archived against hpp/params.php (p, pp, aaaa/) and hpp/index.php (pp), but the snapshot responses could not be reliably retrieved (Wayback rate-limited/bot-flagged) and no live request was possible. Gap: no live reachability."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "https://testphp.vulnweb.com/Mod_Rewrite_Shop/details.php?id= (also buy.php?id, rate.php?id)",
+      "risk_area": "Reflected XSS",
+      "detail": "Target unreachable. CDX confirms historical `details.php?id=\"><img src=x onerror=alert(1)>` and `EXTRACTVALUE(` payload URLs returned 200; attempts to retrieve the archived snapshot returned the Wayback 'not archived/rate-limited' page, and no live request could be made. Gap: reflection/encoding context unverified."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "listproducts.php?cat=",
+      "risk_area": "SQL injection",
+      "detail": "Archived target response (Wayback id_ ts 20230514050754) to cat=123' shows \"You have an error in your SQL syntax ... near '''\" and mysql_fetch_array() warning at /hj/var/www/listproducts.php line 74; ts 20170515093925 cat=2 order by 12-- shows \"Unknown column '12' in 'order clause'\" (11 columns). Live target down so evidence is archived, not re-executed."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "artists.php?artist=",
+      "risk_area": "SQL injection",
+      "detail": "Archived target response (Wayback id_ ts 20260211111051) to artist=' shows \"You have an error in your SQL syntax ... near '''\"; ts 20210602180839 union select 1, table_name, 3 from information_schema.tables rendered \"artist: artists\" (extracted table_name) — UNION extraction. Live target down so archived evidence."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "AJAX/infoartist.php?id=",
+      "risk_area": "SQL injection",
+      "detail": "Archived responses show mysql_fetch_array() boolean-given warnings emitted from /hj/var/www/AJAX/infoartist.php line 7 and infotitle.php line 5 when 'id' is supplied — query built from $_GET[id]. No extraction captured yet; live target down."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "product.php?pic=",
+      "risk_area": "SQL injection",
+      "detail": "product.php?pic= archived 200 snapshots exist for quote/OR payloads (e.g. ts 20230803024400 pic=1 OR 17-7=10CONFIRMED; ts 20250507131251 pic=6'&gt=). Could not fetch body reliably through 10s proxy cap; not yet confirmed. Live target down."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "login.php (un/pass)",
+      "risk_area": "SQL injection",
+      "detail": "Live target globally unreachable (sandbox direct, Caido proxy/replay 10s timeout, 3 external CORS fetchers, check-host.net nodes time out on 80/443). Archived raw snapshots show unescaped single quote producing a MySQL syntax error and an ORDER BY column-count boundary at listproducts.php line 74; also a UNION-based extraction of information_schema table_name reflected as \"artist: artists\". Per root-agent direction, no report filed from archived data — candidate left open pending a live target."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "search.php (searchFor/test)",
+      "risk_area": "SQL injection",
+      "detail": "Could not test live — host globally unreachable. search form POSTs searchFor to search.php?test=query (form observed in archived category/artist pages); no archived injectable snapshot analyzed before wrap-up."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "cart.php add-to-cart params",
+      "risk_area": "SQL injection",
+      "detail": "Could not test live — host globally unreachable. Cart add/remove params not exercised; no archived injectable snapshot analyzed."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "categories.php",
+      "risk_area": "SQL injection",
+      "detail": "Could not test live — host globally unreachable. categories.php itself lists listproducts.php?cat=1..4 statically (no DB param); the linked cat param is covered under listproducts.php."
+    },
+    {
+      "kind": "needs_follow_up",
+      "surface": "art.php / artist.php lookups",
+      "risk_area": "SQL injection",
+      "detail": "Could not test live — host globally unreachable (no live request ever completed in scan proxy history). art.php/artist.php surfaces not reached."
+    },
+    {
+      "kind": "unrecorded_risk_class",
+      "risk_area": "browser security",
+      "detail": "Agent(s) XSS Hunter were assigned the 'browser_security' skill, but no coverage entry records this class being assessed. Treat it as unexamined, not as clean."
+    },
+    {
+      "kind": "agent_recorded_no_coverage",
+      "agent_name": "Recon & Attack-Surface Mapper",
+      "detail": "Recon & Attack-Surface Mapper ran (status: stopped) without recording any coverage. Whatever it examined is absent from this record."
+    },
+    {
+      "kind": "agent_recorded_no_coverage",
+      "agent_name": "SQLi Validation (listproducts/artists)",
+      "detail": "SQLi Validation (listproducts/artists) ran (status: stopped) without recording any coverage. Whatever it examined is absent from this record."
+    }
+  ]
+}

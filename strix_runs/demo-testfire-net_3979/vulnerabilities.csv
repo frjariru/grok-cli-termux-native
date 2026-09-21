@@ -1,0 +1,18 @@
+id,title,severity,timestamp,file
+vuln-0009,SQL Injection Authentication Bypass in Login (POST /api/login and POST /doLogin),CRITICAL,2026-09-20 21:48:16 UTC,vulnerabilities/vuln-0009.md
+vuln-0003,Unauthenticated path traversal in the index.jsp `content` parameter allows reading protected WEB-INF deployment files,HIGH,2026-09-20 21:45:12 UTC,vulnerabilities/vuln-0003.md
+vuln-0005,Broken Function-Level Authorization: Any Authenticated Customer Can Invoke Admin Functions and Take Over Accounts,HIGH,2026-09-20 21:46:59 UTC,vulnerabilities/vuln-0005.md
+vuln-0015,Stored XSS via /admin/addUser username rendered in /admin/admin.jsp (cross-user confirmed),HIGH,2026-09-20 21:48:43 UTC,vulnerabilities/vuln-0015.md
+vuln-0001,Reflected XSS in /util/serverStatusCheckService.jsp HostName parameter,MEDIUM,2026-09-20 21:41:12 UTC,vulnerabilities/vuln-0001.md
+vuln-0002,Plaintext credential and database schema disclosure in the admin console user list,MEDIUM,2026-09-20 21:44:56 UTC,vulnerabilities/vuln-0002.md
+vuln-0004,IDOR / Broken Object-Level Authorization exposes any customer's balance and transaction history,MEDIUM,2026-09-20 21:46:15 UTC,vulnerabilities/vuln-0004.md
+vuln-0006,Reflected XSS in GET /search.jsp 'query' parameter,MEDIUM,2026-09-20 21:48:00 UTC,vulnerabilities/vuln-0006.md
+vuln-0007,Reflected XSS in GET /index.jsp 'content' parameter (keyword-filter bypass),MEDIUM,2026-09-20 21:48:10 UTC,vulnerabilities/vuln-0007.md
+vuln-0008,Broken Object-Level Authorization in POST /api/transfer enables transferring funds out of arbitrary accounts,MEDIUM,2026-09-20 21:48:12 UTC,vulnerabilities/vuln-0008.md
+vuln-0010,Reflected XSS in GET /bank/queryxpath.jsp 'query' parameter,MEDIUM,2026-09-20 21:48:19 UTC,vulnerabilities/vuln-0010.md
+vuln-0011,"Negative transfer amount in POST /api/transfer reverses fund flow, allowing theft from arbitrary accounts",MEDIUM,2026-09-20 21:48:25 UTC,vulnerabilities/vuln-0011.md
+vuln-0012,Reflected XSS in POST /sendFeedback 'name' parameter,MEDIUM,2026-09-20 21:48:29 UTC,vulnerabilities/vuln-0012.md
+vuln-0014,Self-transfer (fromAccount equal to toAccount) creates funds instead of being a no-op,MEDIUM,2026-09-20 21:48:39 UTC,vulnerabilities/vuln-0014.md
+vuln-0016,Race condition (non-atomic balance read-modify-write) on POST /api/transfer causes lost updates despite HTTP 200 successes,MEDIUM,2026-09-20 21:49:02 UTC,vulnerabilities/vuln-0016.md
+vuln-0017,DOM-Based XSS and Open Redirect via the url Parameter in /disclaimer.htm,MEDIUM,2026-09-20 21:49:41 UTC,vulnerabilities/vuln-0017.md
+vuln-0013,"API Bearer Token Embeds Reversible Credentials, Ignores Its Signature, and Survives Logout",LOW,2026-09-20 21:48:33 UTC,vulnerabilities/vuln-0013.md

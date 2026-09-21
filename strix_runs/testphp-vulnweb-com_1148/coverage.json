@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-19 23:40:47 UTC",
+  "run_id": "testphp-vulnweb-com_1148",
+  "run_name": "testphp-vulnweb-com_1148",
+  "scope": {
+    "targets": [
+      {
+        "type": "web_application",
+        "details": {
+          "target_url": "https://testphp.vulnweb.com"
+        },
+        "original": "https://testphp.vulnweb.com"
+      }
+    ],
+    "scan_mode": "quick",
+    "scope_mode": "auto",
+    "diff_scope": {
+      "active": false,
+      "mode": "auto"
+    },
+    "instruction": ""
+  },
+  "summary": {
+    "surfaces_reviewed": 0,
+    "outcomes": {},
+    "findings_filed": 0,
+    "gaps": 1
+  },
+  "machine_observed": {
+    "agents": [
+      {
+        "agent_id": "9fd84b16",
+        "agent_name": "Recon Mapper",
+        "status": "stopped",
+        "skills": [
+          "reconnaissance/asset_discovery",
+          "tooling/katana",
+          "tooling/httpx",
+          "tooling/nmap",
+          "tooling/agent_browser"
+        ],
+        "task": "BLACK-BOX RECONNAISSANCE ONLY of in-scope target https://testphp.vulnweb.com (host: testphp.vulnweb.com). Do NOT run exploit payloads, injection tests, or vulnerability scanners. Map the attack surface thoroughly and write shared notes.\n\nAUTHORIZATION: Platform-verified in-scope. Only this host. Do not test any other domain.\n\nCALL get_threat_model(target=\"https://testphp.vulnweb.com\") first. It will be empty; do NOT invent a full threat model yourself — the parent will save it from your recon. You MAY create_note entries.\n\nOBJECTIVES (quick-scan, bounded, high-signal):\n1. Confirm host/port/scheme reachability (HTTPS 443; also check HTTP 80 redirect). Light nmap of common web ports only — do not scan huge port ranges.\n2. Fingerprint: server, PHP version if leaked, cookies, security headers, WAF, TLS, tech stack.\n3. Crawl the site (katana and/or agent-browser --session recon-mapper). Bound depth/duration. Extract:\n   - All unique paths/pages\n   - All forms (action, method, fields)\n   - All query/body parameters\n   - Auth/session flows (login, signup, cookies, CSRF tokens)\n   - Links to AJAX, shop, guestbook, comments, search, artists, products, userinfo, file upload, hpp, flash, htaccess, etc.\n4. Directory/file discovery: light ffuf/dirsearch of common PHP/app paths if katana misses them. Keep it bounded.\n5. JS files: list and note interesting endpoints/params (do not deep-analyze XSS yet).\n6. Identify roles: unauthenticated vs logged-in surfaces. If default/demo credentials exist on the page, record them in a note — do not brute force.\n7. Parameter inventory: every attacker-controlled input (GET/POST/cookie/header) with the page that uses it.\n\nDELIVERABLES:\n- create_note titled \"Attack surface inventory\" (category=wiki, tags=[\"recon\",\"inventory\"]) with: hosts, tech, cookies, every endpoint+method+params+auth requirement, every form, interesting headers, observed roles.\n- create_note titled \"Auth and session model\" (category=wiki, tags=[\"recon\",\"auth\"]) with login/signup/logout, cookie flags, CSRF presence/absence.\n- record_coverage for: host fingerprinting, crawl completeness, auth mapping. Use outcome needs_follow_up only if something is incomplete; otherwise no_issue_found for recon-only surfaces (recon is mapping, not vuln testing).\n- agent_finish with a structured summary of the inventory and recommended hunter targets (SQLi params, XSS reflections, IDOR object IDs, upload, LFI, CSRF state-changes). List open_items if any.\n\nCONSTRAINTS:\n- Quick mode: skip exhaustive subdomain brute force and huge dir wordlists. This is a single known host.\n- Do not spawn children unless you truly need a parallel crawler.\n- Write artifacts under /workspace/recon/ if you dump URL lists; keep them small.\n- NEVER send SQLi/XSS/etc payloads. Benign requests only.",
+        "is_root": false
+      },
+      {
+        "agent_id": "840320cd",
+        "agent_name": "Root Agent",
+        "status": "stopped",
+        "skills": [],
+        "task": "\n\nURLs: - https://testphp.vulnweb.com",
+        "is_root": true
+      }
+    ],
+    "skills_exercised": [
+      "agent_browser",
+      "asset_discovery",
+      "httpx",
+      "katana",
+      "nmap"
+    ],
+    "findings_filed": 0,
+    "source": "runtime"
+  },
+  "completeness": {
+    "complete": false,
+    "scan_status": "stopped",
+    "exit_reason": "budget_exceeded",
+    "caveats": [
+      "The scan ended with status 'stopped' rather than completing, so coverage reflects only the work finished before it stopped.",
+      "2 agent(s) did not finish cleanly (Recon Mapper, Root Agent); any surface they held is under-covered.",
+      "The run terminated via 'budget_exceeded' rather than the root agent finishing, so remaining scope was not reached."
+    ]
+  },
+  "entries": [],
+  "gaps": [
+    {
+      "kind": "agent_recorded_no_coverage",
+      "agent_name": "Recon Mapper",
+      "detail": "Recon Mapper ran (status: stopped) without recording any coverage. Whatever it examined is absent from this record."
+    }
+  ]
+}

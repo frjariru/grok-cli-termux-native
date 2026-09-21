@@ -1,0 +1,1309 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Strix",
+          "informationUri": "https://strix.ai",
+          "rules": [
+            {
+              "id": "strix-coverage/attack-surface-endpoint-amp-parameter-enumeration",
+              "name": "Attack-surface / endpoint &amp; parameter enumeration",
+              "shortDescription": {
+                "text": "Coverage: Attack-surface / endpoint &amp; parameter enumeration"
+              },
+              "fullDescription": {
+                "text": "Coverage of Attack-surface / endpoint &amp; parameter enumeration across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Attack-surface / endpoint &amp; parameter enumeration across the assessed attack surface.",
+                "markdown": "Coverage of Attack-surface / endpoint &amp; parameter enumeration across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/authentication-bypass-weak-credentials-session-cookie-flags",
+              "name": "Authentication bypass / weak credentials / session cookie flags",
+              "shortDescription": {
+                "text": "Coverage: Authentication bypass / weak credentials / session cookie flags"
+              },
+              "fullDescription": {
+                "text": "Coverage of Authentication bypass / weak credentials / session cookie flags across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Authentication bypass / weak credentials / session cookie flags across the assessed attack surface.",
+                "markdown": "Coverage of Authentication bypass / weak credentials / session cookie flags across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/missing-authentication-forced-browsing-cross-user-data-exposure",
+              "name": "Missing authentication / forced browsing / cross-user data exposure",
+              "shortDescription": {
+                "text": "Coverage: Missing authentication / forced browsing / cross-user data exposure"
+              },
+              "fullDescription": {
+                "text": "Coverage of Missing authentication / forced browsing / cross-user data exposure across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Missing authentication / forced browsing / cross-user data exposure across the assessed attack surface.",
+                "markdown": "Coverage of Missing authentication / forced browsing / cross-user data exposure across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/idor-bola-cross-user-object-access",
+              "name": "IDOR / BOLA (cross-user object access)",
+              "shortDescription": {
+                "text": "Coverage: IDOR / BOLA (cross-user object access)"
+              },
+              "fullDescription": {
+                "text": "Coverage of IDOR / BOLA (cross-user object access) across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of IDOR / BOLA (cross-user object access) across the assessed attack surface.",
+                "markdown": "Coverage of IDOR / BOLA (cross-user object access) across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/mass-assignment-privilege-fields-account-creation-abuse",
+              "name": "Mass assignment / privilege fields / account-creation abuse",
+              "shortDescription": {
+                "text": "Coverage: Mass assignment / privilege fields / account-creation abuse"
+              },
+              "fullDescription": {
+                "text": "Coverage of Mass assignment / privilege fields / account-creation abuse across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Mass assignment / privilege fields / account-creation abuse across the assessed attack surface.",
+                "markdown": "Coverage of Mass assignment / privilege fields / account-creation abuse across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/broken-function-level-authorization",
+              "name": "Broken function-level authorization",
+              "shortDescription": {
+                "text": "Coverage: Broken function-level authorization"
+              },
+              "fullDescription": {
+                "text": "Coverage of Broken function-level authorization across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Broken function-level authorization across the assessed attack surface.",
+                "markdown": "Coverage of Broken function-level authorization across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/session-fixation-cookie-reuse-after-logout-csrf",
+              "name": "Session fixation / cookie reuse after logout / CSRF",
+              "shortDescription": {
+                "text": "Coverage: Session fixation / cookie reuse after logout / CSRF"
+              },
+              "fullDescription": {
+                "text": "Coverage of Session fixation / cookie reuse after logout / CSRF across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Session fixation / cookie reuse after logout / CSRF across the assessed attack surface.",
+                "markdown": "Coverage of Session fixation / cookie reuse after logout / CSRF across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/path-traversal-lfi-arbitrary-file-read",
+              "name": "Path traversal / LFI (arbitrary file read)",
+              "shortDescription": {
+                "text": "Coverage: Path traversal / LFI (arbitrary file read)"
+              },
+              "fullDescription": {
+                "text": "Coverage of Path traversal / LFI (arbitrary file read) across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Path traversal / LFI (arbitrary file read) across the assessed attack surface.",
+                "markdown": "Coverage of Path traversal / LFI (arbitrary file read) across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/path-traversal-lfi-local-file-inclusion-into-interpreter",
+              "name": "Path traversal / LFI / local file inclusion into interpreter",
+              "shortDescription": {
+                "text": "Coverage: Path traversal / LFI / local file inclusion into interpreter"
+              },
+              "fullDescription": {
+                "text": "Coverage of Path traversal / LFI / local file inclusion into interpreter across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Path traversal / LFI / local file inclusion into interpreter across the assessed attack surface.",
+                "markdown": "Coverage of Path traversal / LFI / local file inclusion into interpreter across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/information-disclosure-source-amp-secret-exposure",
+              "name": "Information disclosure / source &amp; secret exposure",
+              "shortDescription": {
+                "text": "Coverage: Information disclosure / source &amp; secret exposure"
+              },
+              "fullDescription": {
+                "text": "Coverage of Information disclosure / source &amp; secret exposure across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Information disclosure / source &amp; secret exposure across the assessed attack surface.",
+                "markdown": "Coverage of Information disclosure / source &amp; secret exposure across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/unrestricted-file-upload-extension-amp-content-type-bypass",
+              "name": "Unrestricted file upload / extension &amp; content-type bypass",
+              "shortDescription": {
+                "text": "Coverage: Unrestricted file upload / extension &amp; content-type bypass"
+              },
+              "fullDescription": {
+                "text": "Coverage of Unrestricted file upload / extension &amp; content-type bypass across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Unrestricted file upload / extension &amp; content-type bypass across the assessed attack surface.",
+                "markdown": "Coverage of Unrestricted file upload / extension &amp; content-type bypass across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/target-reachability-network-availability",
+              "name": "Target reachability / network availability",
+              "shortDescription": {
+                "text": "Coverage: Target reachability / network availability"
+              },
+              "fullDescription": {
+                "text": "Coverage of Target reachability / network availability across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Target reachability / network availability across the assessed attack surface.",
+                "markdown": "Coverage of Target reachability / network availability across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/reflected-xss",
+              "name": "Reflected XSS",
+              "shortDescription": {
+                "text": "Coverage: Reflected XSS"
+              },
+              "fullDescription": {
+                "text": "Coverage of Reflected XSS across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Reflected XSS across the assessed attack surface.",
+                "markdown": "Coverage of Reflected XSS across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/stored-xss",
+              "name": "Stored XSS",
+              "shortDescription": {
+                "text": "Coverage: Stored XSS"
+              },
+              "fullDescription": {
+                "text": "Coverage of Stored XSS across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Stored XSS across the assessed attack surface.",
+                "markdown": "Coverage of Stored XSS across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/stored-reflected-xss",
+              "name": "Stored / reflected XSS",
+              "shortDescription": {
+                "text": "Coverage: Stored / reflected XSS"
+              },
+              "fullDescription": {
+                "text": "Coverage of Stored / reflected XSS across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Stored / reflected XSS across the assessed attack surface.",
+                "markdown": "Coverage of Stored / reflected XSS across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/reflected-stored-xss-form-fields",
+              "name": "Reflected / stored XSS (form fields)",
+              "shortDescription": {
+                "text": "Coverage: Reflected / stored XSS (form fields)"
+              },
+              "fullDescription": {
+                "text": "Coverage of Reflected / stored XSS (form fields) across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Reflected / stored XSS (form fields) across the assessed attack surface.",
+                "markdown": "Coverage of Reflected / stored XSS (form fields) across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/dom-based-xss-innerhtml-sinks-xml-ajax-sources",
+              "name": "DOM-based XSS (innerHTML sinks, XML/AJAX sources)",
+              "shortDescription": {
+                "text": "Coverage: DOM-based XSS (innerHTML sinks, XML/AJAX sources)"
+              },
+              "fullDescription": {
+                "text": "Coverage of DOM-based XSS (innerHTML sinks, XML/AJAX sources) across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of DOM-based XSS (innerHTML sinks, XML/AJAX sources) across the assessed attack surface.",
+                "markdown": "Coverage of DOM-based XSS (innerHTML sinks, XML/AJAX sources) across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/reflected-xss-incl-http-parameter-pollution",
+              "name": "Reflected XSS (incl. HTTP parameter pollution)",
+              "shortDescription": {
+                "text": "Coverage: Reflected XSS (incl. HTTP parameter pollution)"
+              },
+              "fullDescription": {
+                "text": "Coverage of Reflected XSS (incl. HTTP parameter pollution) across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Reflected XSS (incl. HTTP parameter pollution) across the assessed attack surface.",
+                "markdown": "Coverage of Reflected XSS (incl. HTTP parameter pollution) across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/sql-injection",
+              "name": "SQL injection",
+              "shortDescription": {
+                "text": "Coverage: SQL injection"
+              },
+              "fullDescription": {
+                "text": "Coverage of SQL injection across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of SQL injection across the assessed attack surface.",
+                "markdown": "Coverage of SQL injection across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            },
+            {
+              "id": "strix-coverage/host-availability-reachability",
+              "name": "Host availability / reachability",
+              "shortDescription": {
+                "text": "Coverage: Host availability / reachability"
+              },
+              "fullDescription": {
+                "text": "Coverage of Host availability / reachability across the assessed attack surface."
+              },
+              "defaultConfiguration": {
+                "level": "none"
+              },
+              "help": {
+                "text": "Coverage of Host availability / reachability across the assessed attack surface.",
+                "markdown": "Coverage of Host availability / reachability across the assessed attack surface."
+              },
+              "properties": {
+                "tags": [
+                  "coverage"
+                ]
+              }
+            }
+          ],
+          "version": "1.6.2"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "strix-coverage/attack-surface-endpoint-amp-parameter-enumeration",
+          "ruleIndex": 0,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Attack-surface / endpoint &amp; parameter enumeration — Requires further review: https://testphp.vulnweb.com (whole-host attack surface)\n\nLive host unreachable from sandbox: DNS resolves to 44.228.249.3 (AWS us-west-2) but TCP 80/443 are filtered; proxy returns Caido 502 with cause 'Timeout' (~10s) and direct curl times out (20s); no response ever captured in proxy history (all response:null). Surface mapped instead from Wayback CDX + archived snapshots: ~24 core PHP scripts, /AJAX/, /Mod_Rewrite_Shop/, /hpp/, plus sensitive paths (/.idea/, /CVS/, /Connections/DB_Connection.php, /admin/create.sql, /_mmServerScripts/MMHTTPDB.php, /index.bak, /index.zip, /bxss/). 50+ query params enumerated; verbose PHP errors leak /hj/var/www path. Live validation of existence, cookies, and injection behavior blocked by reachability."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com (whole-host attack surface)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Attack-surface / endpoint &amp; parameter enumeration",
+              "surface": "https://testphp.vulnweb.com (whole-host attack surface)",
+              "recorded_by": "Lean Surface Mapper",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/authentication-bypass-weak-credentials-session-cookie-flags",
+          "ruleIndex": 1,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Authentication bypass / weak credentials / session cookie flags — Requires further review: POST /login.php (auth, credentials, session cookie)\n\nTarget unreachable: TCP 80/443 filtered (nmap no-response), Caido proxy 502 Timeout, and independent fetchers (r.jina.ai, Google translate proxy, archive.org SPN) also timeout while controls (example.com) succeed. Could not send any login request, so test/test, bypasses, and Set-Cookie flags (HttpOnly/Secure/SameSite) remain untested."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "POST /login.php (auth, credentials, session cookie)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Authentication bypass / weak credentials / session cookie flags",
+              "surface": "POST /login.php (auth, credentials, session cookie)",
+              "recorded_by": "Access Control & Auth Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/missing-authentication-forced-browsing-cross-user-data-exposure",
+          "ruleIndex": 2,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Missing authentication / forced browsing / cross-user data exposure — Requires further review: GET/POST /userinfo.php (forced browsing / missing auth)\n\nTarget unreachable (TCP 80/443 filtered; proxy and independent fetchers timeout). Could not issue authenticated vs unauthenticated requests, so whether userinfo.php renders another user's data without a valid session is untested."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GET/POST /userinfo.php (forced browsing / missing auth)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Missing authentication / forced browsing / cross-user data exposure",
+              "surface": "GET/POST /userinfo.php (forced browsing / missing auth)",
+              "recorded_by": "Access Control & Auth Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/idor-bola-cross-user-object-access",
+          "ruleIndex": 3,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "IDOR / BOLA (cross-user object access) — Requires further review: cart.php / userinfo.php / AJAX/info.php?id= / showimage.php?file= (object references)\n\nTarget unreachable; no live requests possible. ID increment/swap and alternate-user comparisons could not be performed. Note: these params may also be SQLi/traversal sinks (owned by sibling agents)."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "cart.php / userinfo.php / AJAX/info.php?id= / showimage.php?file= (object references)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "IDOR / BOLA (cross-user object access)",
+              "surface": "cart.php / userinfo.php / AJAX/info.php?id= / showimage.php?file= (object references)",
+              "recorded_by": "Access Control & Auth Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/mass-assignment-privilege-fields-account-creation-abuse",
+          "ruleIndex": 4,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Mass assignment / privilege fields / account-creation abuse — Requires further review: POST /signup.php -> /secured/newuser.php\n\nTarget unreachable. Archived HTML shows fixed fields uuname/upass/upass2/uemail/urname/uphone/ucc with no role field, but server-side binding and whether signup is truly disabled could not be verified live."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "POST /signup.php -> /secured/newuser.php"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Mass assignment / privilege fields / account-creation abuse",
+              "surface": "POST /signup.php -> /secured/newuser.php",
+              "recorded_by": "Access Control & Auth Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/broken-function-level-authorization",
+          "ruleIndex": 5,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Broken function-level authorization — Requires further review: Privileged/admin actions reachable without role (BFLA)\n\nTarget unreachable; no endpoint enumeration or role-differentiated requests possible. No distinct admin role known from archived HTML (/secured/ path exists but untested)."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Privileged/admin actions reachable without role (BFLA)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Broken function-level authorization",
+              "surface": "Privileged/admin actions reachable without role (BFLA)",
+              "recorded_by": "Access Control & Auth Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/session-fixation-cookie-reuse-after-logout-csrf",
+          "ruleIndex": 6,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Session fixation / cookie reuse after logout / CSRF — Requires further review: Session management (logout, fixation, CSRF tokens on login/signup/guestbook/cart)\n\nTarget unreachable; could not obtain a session cookie, log out, or inspect state-changing forms live. Archived forms show no CSRF token (unverified)."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Session management (logout, fixation, CSRF tokens on login/signup/guestbook/cart)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Session fixation / cookie reuse after logout / CSRF",
+              "surface": "Session management (logout, fixation, CSRF tokens on login/signup/guestbook/cart)",
+              "recorded_by": "Access Control & Auth Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/path-traversal-lfi-arbitrary-file-read",
+          "ruleIndex": 7,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Path traversal / LFI (arbitrary file read) — Requires further review: https://testphp.vulnweb.com/showimage.php?file= and product.php?pic= (file/path parameters)\n\nCould not execute: live host unreachable from sandbox (DNS 44.228.249.3; every request returns proxy 502/Caido 'Timeout' page after ~10s; direct egress blocked; 12 sequential attempts + http1.0/http2/https-IP/port-sweep all timeout). Ready harness at /workspace/trav/probe.py with differential baseline-vs-payload proof rule. Gap: no live reachability, so no traversal result confirmed or ruled out."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/showimage.php?file= and product.php?pic= (file/path parameters)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Path traversal / LFI (arbitrary file read)",
+              "surface": "https://testphp.vulnweb.com/showimage.php?file= and product.php?pic= (file/path parameters)",
+              "recorded_by": "Traversal & Disclosure Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/path-traversal-lfi-local-file-inclusion-into-interpreter",
+          "ruleIndex": 8,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Path traversal / LFI / local file inclusion into interpreter — Requires further review: https://testphp.vulnweb.com/index.php?cmd= (include/eval-like parameter)\n\nCould not execute: host unreachable (proxy 502/Caido Timeout page, ~10s, consistent). Harness covers index.php?cmd= with traversal + php://filter payloads. Gap: no live reachability to confirm or rule out inclusion."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/index.php?cmd= (include/eval-like parameter)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Path traversal / LFI / local file inclusion into interpreter",
+              "surface": "https://testphp.vulnweb.com/index.php?cmd= (include/eval-like parameter)",
+              "recorded_by": "Traversal & Disclosure Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/information-disclosure-source-amp-secret-exposure",
+          "ruleIndex": 9,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Information disclosure / source &amp; secret exposure — Requires further review: https://testphp.vulnweb.com information-disclosure artifacts (phpinfo.php, .git/, .env, .htaccess, backups *.bak/*.zip, Connections/DB_Connection.php, admin/create.sql, _mmServerScripts/, .idea/, CVS/, dir listing, verbose PHP errors)\n\nCould not execute: host unreachable from sandbox (proxy Caido 502 'Timeout' on every path; proxy healthy for other hosts so failure is target-specific). Check list and PHP-source/artifact content checks are implemented in /workspace/trav/probe.py. Archived hints exist but are not live evidence. Gap: no reachability, so exposure neither confirmed nor ruled out."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com information-disclosure artifacts (phpinfo.php, .git/, .env, .htaccess, backups *.bak/*.zip, Connections/DB_Connection.php, admin/create.sql, _mmServerScripts/, .idea/, CVS/, dir listing, verbose PHP errors)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Information disclosure / source &amp; secret exposure",
+              "surface": "https://testphp.vulnweb.com information-disclosure artifacts (phpinfo.php, .git/, .env, .htaccess, backups *.bak/*.zip, Connections/DB_Connection.php, admin/create.sql, _mmServerScripts/, .idea/, CVS/, dir listing, verbose PHP errors)",
+              "recorded_by": "Traversal & Disclosure Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/unrestricted-file-upload-extension-amp-content-type-bypass",
+          "ruleIndex": 10,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Unrestricted file upload / extension &amp; content-type bypass — Requires further review: https://testphp.vulnweb.com file-upload surfaces (signup.php, userinfo.php, guestbook.php, comment.php, /secured/newuser.php)\n\nCould not execute: host unreachable (proxy Caido 502 'Timeout' page, ~10s, consistent across 12+ attempts). Harness enumerates multipart/file inputs on these pages. Gap: upload endpoints never fetched live, so presence/absence and validation behaviour unverified."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com file-upload surfaces (signup.php, userinfo.php, guestbook.php, comment.php, /secured/newuser.php)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Unrestricted file upload / extension &amp; content-type bypass",
+              "surface": "https://testphp.vulnweb.com file-upload surfaces (signup.php, userinfo.php, guestbook.php, comment.php, /secured/newuser.php)",
+              "recorded_by": "Traversal & Disclosure Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/target-reachability-network-availability",
+          "ruleIndex": 11,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Target reachability / network availability — Requires further review: https://testphp.vulnweb.com (host 44.228.249.3)\n\nUNREACHABLE — no route exists. DNS resolves consistently to 44.228.249.3 (no AAAA) via local resolver, 8.8.8.8, and 1.1.1.1. TCP 80/443 connect times out from this sandbox (direct and via Caido proxy, which returns 502 cause=Timeout after its 10s upstream limit). nmap -Pn -T4 shows 0 open ports across 1-1024 plus 8080/8443/8000/8081/8888/3000/5000/9000. Aliases www.vulnweb.com and vulnweb.com resolve to the same IP and time out identically. Egress is NOT the cause: google.com, example.com, and AWS us-west-2 endpoints (s3/dynamodb/ec2) all connect fine. Multi-node external confirmation via check-host.net: all 12 global nodes (CA, ES, HK, IL, IR, IT, JP, RU x2, TR, UA, UK) report \"Connection timed out\" on TCP 443, and all 12 nodes (incl. US node us4) on TCP 80. Independent external fetchers also fail: r.jina.ai \"upstream connect error ... connection termination\", api.allorigins.win HTTP 408, api.codetabs.com HTTP 522. Conclusion: the origin server is globally down/filtered, not a local egress restriction. No working route (no alternate IPs, ports, hostnames, IPv6, or proxy path)."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com (host 44.228.249.3)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Target reachability / network availability",
+              "surface": "https://testphp.vulnweb.com (host 44.228.249.3)",
+              "recorded_by": "Reachability & Alternate Route Tester",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/reflected-xss",
+          "ruleIndex": 12,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Reflected XSS — Requires further review: https://testphp.vulnweb.com/search.php (params: test, searchFor)\n\nTarget globally unreachable (TCP 80/443 filtered; Caido 502 Timeout; 24+ global nodes + external fetchers all time out). No live request could be sent, so reflection/encoding context of `test`/`searchFor` was never observed. Archived base page (Wayback 2025) shows form posts searchFor to search.php?test=query and the content region is server-rendered (classic reflection surface). Harness ready at /workspace/xss/harness.py. Gap: no live reachability."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/search.php (params: test, searchFor)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Reflected XSS",
+              "surface": "https://testphp.vulnweb.com/search.php (params: test, searchFor)",
+              "recorded_by": "XSS Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/stored-xss",
+          "ruleIndex": 13,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Stored XSS — Requires further review: https://testphp.vulnweb.com/guestbook.php (name hidden field, text/submit)\n\nTarget unreachable; could not POST an entry or re-fetch as another visitor. Archived snapshot (Wayback 20251103072058) of guestbook.php shows entries rendered server-side via `<strong>{name}</strong>` + text and a form posting hidden name + textarea — a plausible stored-XSS render sink — but no live submission/rendering could be verified. GET `?name=<script>` snapshot showed the value NOT reflected (one archived negative data point only). Gap: no live submit/echo test."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/guestbook.php (name hidden field, text/submit)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Stored XSS",
+              "surface": "https://testphp.vulnweb.com/guestbook.php (name hidden field, text/submit)",
+              "recorded_by": "XSS Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/stored-reflected-xss",
+          "ruleIndex": 14,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Stored / reflected XSS — Requires further review: https://testphp.vulnweb.com/comment.php (name, comment, phpaction, aid)\n\nTarget unreachable. Archived comment.php form (Wayback) shows `name` input and `comment` textarea posting to comment.php with hidden field literally `value=\"echo $_POST[comment];\"`, and CDX shows comment.php?aid= returns an identical digest for aid=1/-1/'x' (aid not reflected in the visible page). Whether name/comment are stored and re-rendered unescaped elsewhere could not be tested live. Gap: no live submit/echo."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/comment.php (name, comment, phpaction, aid)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Stored / reflected XSS",
+              "surface": "https://testphp.vulnweb.com/comment.php (name, comment, phpaction, aid)",
+              "recorded_by": "XSS Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/reflected-xss",
+          "ruleIndex": 12,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Reflected XSS — Requires further review: https://testphp.vulnweb.com/product.php?pic= and listproducts.php?cat/artist\n\nTarget unreachable. CDX confirms historical scanner traffic with `<script>alert(\"XSS\")</script>` UNION payloads against product.php?pic= and listproducts.php?cat=, but archived base pages do not show the server-side reflection context and no live request could be made. Gap: reflect/encode context unverified."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/product.php?pic= and listproducts.php?cat/artist"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Reflected XSS",
+              "surface": "https://testphp.vulnweb.com/product.php?pic= and listproducts.php?cat/artist",
+              "recorded_by": "XSS Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/reflected-xss",
+          "ruleIndex": 12,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Reflected XSS — Requires further review: https://testphp.vulnweb.com/artists.php?artist=\n\nTarget unreachable. Archived artists.php renders DB-derived artist names into a server-side `<div class='story'>` block and links `artists.php?artist=N`; no live payload could be reflected. Gap: no live reachability."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/artists.php?artist="
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Reflected XSS",
+              "surface": "https://testphp.vulnweb.com/artists.php?artist=",
+              "recorded_by": "XSS Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/reflected-stored-xss-form-fields",
+          "ruleIndex": 15,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Reflected / stored XSS (form fields) — Requires further review: https://testphp.vulnweb.com/signup.php / userinfo.php / login.php form fields\n\nTarget unreachable. Archived signup.php form posts fixed fields (uuname/upass/upass2/uemail/urname/uphone/ucc) to /secured/newuser.php; login.php posts to userinfo.php. No live submit or re-render could be observed to determine if any field is reflected/stored unescaped. Gap: no live reachability."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/signup.php / userinfo.php / login.php form fields"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Reflected / stored XSS (form fields)",
+              "surface": "https://testphp.vulnweb.com/signup.php / userinfo.php / login.php form fields",
+              "recorded_by": "XSS Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/dom-based-xss-innerhtml-sinks-xml-ajax-sources",
+          "ruleIndex": 16,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "DOM-based XSS (innerHTML sinks, XML/AJAX sources) — Requires further review: https://testphp.vulnweb.com/AJAX/index.php (innerHTML sinks) + AJAX/infoartist.php|infocateg.php|infotitle.php|showxml.php\n\nTarget unreachable. Static review of the archived AJAX/index.php (retrieved from Wayback) shows DOM XSS sinks: SetContent()/SetInfo() build HTML strings from XML node values and assign to `document.getElementById('contentDiv').innerHTML` / `infoDiv.innerHTML`, and xmlCompleted() does `xd.innerHTML = httpreq.responseText` from POST showxml.php. Inputs are DB/XML-derived (AJAX/infoartist.php|infocateg.php|infotitle.php) rather than directly attacker-controlled, so exploitability depends on whether an unauthenticated user can write into those DB fields — could not be tested live. Gap: no live DOM/DB-write test."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/AJAX/index.php (innerHTML sinks) + AJAX/infoartist.php|infocateg.php|infotitle.php|showxml.php"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "DOM-based XSS (innerHTML sinks, XML/AJAX sources)",
+              "surface": "https://testphp.vulnweb.com/AJAX/index.php (innerHTML sinks) + AJAX/infoartist.php|infocateg.php|infotitle.php|showxml.php",
+              "recorded_by": "XSS Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/reflected-xss-incl-http-parameter-pollution",
+          "ruleIndex": 17,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Reflected XSS (incl. HTTP parameter pollution) — Requires further review: https://testphp.vulnweb.com/hpp/params.php (p, pp, aaaa/) and hpp/index.php (pp)\n\nTarget unreachable. CDX confirms historical `<scRipt>alert(...)`, `\"><img src=x onerror=alert(1)>` and `pp=\" onmouseover=` payload URLs were archived against hpp/params.php (p, pp, aaaa/) and hpp/index.php (pp), but the snapshot responses could not be reliably retrieved (Wayback rate-limited/bot-flagged) and no live request was possible. Gap: no live reachability."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/hpp/params.php (p, pp, aaaa/) and hpp/index.php (pp)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Reflected XSS (incl. HTTP parameter pollution)",
+              "surface": "https://testphp.vulnweb.com/hpp/params.php (p, pp, aaaa/) and hpp/index.php (pp)",
+              "recorded_by": "XSS Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/reflected-xss",
+          "ruleIndex": 12,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "Reflected XSS — Requires further review: https://testphp.vulnweb.com/Mod_Rewrite_Shop/details.php?id= (also buy.php?id, rate.php?id)\n\nTarget unreachable. CDX confirms historical `details.php?id=\"><img src=x onerror=alert(1)>` and `EXTRACTVALUE(` payload URLs returned 200; attempts to retrieve the archived snapshot returned the Wayback 'not archived/rate-limited' page, and no live request could be made. Gap: reflection/encoding context unverified."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com/Mod_Rewrite_Shop/details.php?id= (also buy.php?id, rate.php?id)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "Reflected XSS",
+              "surface": "https://testphp.vulnweb.com/Mod_Rewrite_Shop/details.php?id= (also buy.php?id, rate.php?id)",
+              "recorded_by": "XSS Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/sql-injection",
+          "ruleIndex": 18,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "SQL injection — Requires further review: listproducts.php?cat=\n\nArchived target response (Wayback id_ ts 20230514050754) to cat=123' shows \"You have an error in your SQL syntax ... near '''\" and mysql_fetch_array() warning at /hj/var/www/listproducts.php line 74; ts 20170515093925 cat=2 order by 12-- shows \"Unknown column '12' in 'order clause'\" (11 columns). Live target down so evidence is archived, not re-executed."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "listproducts.php?cat="
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "SQL injection",
+              "surface": "listproducts.php?cat=",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/sql-injection",
+          "ruleIndex": 18,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "SQL injection — Requires further review: artists.php?artist=\n\nArchived target response (Wayback id_ ts 20260211111051) to artist=' shows \"You have an error in your SQL syntax ... near '''\"; ts 20210602180839 union select 1, table_name, 3 from information_schema.tables rendered \"artist: artists\" (extracted table_name) — UNION extraction. Live target down so archived evidence."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "artists.php?artist="
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "SQL injection",
+              "surface": "artists.php?artist=",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/sql-injection",
+          "ruleIndex": 18,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "SQL injection — Requires further review: AJAX/infoartist.php?id=\n\nArchived responses show mysql_fetch_array() boolean-given warnings emitted from /hj/var/www/AJAX/infoartist.php line 7 and infotitle.php line 5 when 'id' is supplied — query built from $_GET[id]. No extraction captured yet; live target down."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "AJAX/infoartist.php?id="
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "SQL injection",
+              "surface": "AJAX/infoartist.php?id=",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/sql-injection",
+          "ruleIndex": 18,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "SQL injection — Requires further review: product.php?pic=\n\nproduct.php?pic= archived 200 snapshots exist for quote/OR payloads (e.g. ts 20230803024400 pic=1 OR 17-7=10CONFIRMED; ts 20250507131251 pic=6'&gt=). Could not fetch body reliably through 10s proxy cap; not yet confirmed. Live target down."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "product.php?pic="
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "SQL injection",
+              "surface": "product.php?pic=",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/sql-injection",
+          "ruleIndex": 18,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "SQL injection — Requires further review: login.php (un/pass)\n\nLive target globally unreachable (sandbox direct, Caido proxy/replay 10s timeout, 3 external CORS fetchers, check-host.net nodes time out on 80/443). Archived raw snapshots show unescaped single quote producing a MySQL syntax error and an ORDER BY column-count boundary at listproducts.php line 74; also a UNION-based extraction of information_schema table_name reflected as \"artist: artists\". Per root-agent direction, no report filed from archived data — candidate left open pending a live target."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "login.php (un/pass)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "SQL injection",
+              "surface": "login.php (un/pass)",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/sql-injection",
+          "ruleIndex": 18,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "SQL injection — Requires further review: search.php (searchFor/test)\n\nCould not test live — host globally unreachable. search form POSTs searchFor to search.php?test=query (form observed in archived category/artist pages); no archived injectable snapshot analyzed before wrap-up."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "search.php (searchFor/test)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "SQL injection",
+              "surface": "search.php (searchFor/test)",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/sql-injection",
+          "ruleIndex": 18,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "SQL injection — Requires further review: cart.php add-to-cart params\n\nCould not test live — host globally unreachable. Cart add/remove params not exercised; no archived injectable snapshot analyzed."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "cart.php add-to-cart params"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "SQL injection",
+              "surface": "cart.php add-to-cart params",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/sql-injection",
+          "ruleIndex": 18,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "SQL injection — Requires further review: categories.php\n\nCould not test live — host globally unreachable. categories.php itself lists listproducts.php?cat=1..4 statically (no DB param); the linked cat param is covered under listproducts.php."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "categories.php"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "SQL injection",
+              "surface": "categories.php",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/sql-injection",
+          "ruleIndex": 18,
+          "kind": "open",
+          "level": "none",
+          "message": {
+            "text": "SQL injection — Requires further review: art.php / artist.php lookups\n\nCould not test live — host globally unreachable (no live request ever completed in scan proxy history). art.php/artist.php surfaces not reached."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "art.php / artist.php lookups"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "needs_follow_up",
+              "risk_area": "SQL injection",
+              "surface": "art.php / artist.php lookups",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        },
+        {
+          "ruleId": "strix-coverage/host-availability-reachability",
+          "ruleIndex": 19,
+          "kind": "pass",
+          "level": "none",
+          "message": {
+            "text": "Host availability / reachability — No issue identified: https://testphp.vulnweb.com (whole host)\n\nConfirmed unreachable from every vantage point: direct egress timeout to 44.228.249.3:80/443, Caido proxy 502 after fixed ~10s, Caido replay 30s timeout, api.allorigins.win 5xx, api.codetabs.com 522, r.jina.ai 422 timeout, and check-host.net nodes (AT/BG/CA/IR/RU/UA) report \"Connection timed out\" on HTTP. No request in the shared Caido history ever received a response."
+          },
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "https://testphp.vulnweb.com (whole host)"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "strix": {
+              "coverage_outcome": "no_issue_found",
+              "risk_area": "Host availability / reachability",
+              "surface": "https://testphp.vulnweb.com (whole host)",
+              "recorded_by": "SQLi Hunter",
+              "source": "agent_reported"
+            }
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": false,
+          "toolExecutionNotifications": [
+            {
+              "level": "warning",
+              "message": {
+                "text": "2 agent(s) did not finish cleanly (Recon & Attack-Surface Mapper, SQLi Validation (listproducts/artists)); any surface they held is under-covered."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

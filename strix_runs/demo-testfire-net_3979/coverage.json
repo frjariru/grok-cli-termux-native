@@ -1,0 +1,843 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-20 21:58:07 UTC",
+  "run_id": "demo-testfire-net_3979",
+  "run_name": "demo-testfire-net_3979",
+  "scope": {
+    "targets": [
+      {
+        "type": "web_application",
+        "details": {
+          "target_url": "http://demo.testfire.net"
+        },
+        "original": "http://demo.testfire.net"
+      }
+    ],
+    "scan_mode": "quick",
+    "scope_mode": "auto",
+    "diff_scope": {
+      "active": false,
+      "mode": "auto"
+    },
+    "instruction": ""
+  },
+  "summary": {
+    "surfaces_reviewed": 46,
+    "outcomes": {
+      "reported": 19,
+      "no_issue_found": 8,
+      "ruled_out": 16,
+      "not_applicable": 3
+    },
+    "findings_filed": 17,
+    "gaps": 5
+  },
+  "machine_observed": {
+    "agents": [
+      {
+        "agent_id": "5cdf0e15",
+        "agent_name": "Attack Chain Exploitation Agent",
+        "status": "running",
+        "skills": [
+          "sql_injection",
+          "idor",
+          "broken_function_level_authorization",
+          "business_logic"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app. Source at /workspace/AltoroJ. Confirmed creds jsmith/demo1234; admin/admin_hacked (leaked).\n\nGOAL: perform the end-to-end attack-chaining pass and decide (with dedup discipline) whether a COMBINED exploit demonstrates impact NOT already captured by the individual reports. Existing reports on file (do NOT re-file these): vuln-0001 reflected XSS status-service; 0002 credential/schema disclosure; 0003 path traversal READ (/index.jsp?content=../WEB-INF/web.xml); 0004 IDOR account read; 0005 BFLA user->admin; 0006/0007/0010/0012/0015 XSS (0015 is now High cross-user stored XSS); 0008 transfer without source-ownership check; 0009 CRITICAL SQLi auth bypass (unauthenticated admin); 0011 negative-amount transfer; 0013 weak token; 0014 self-transfer money creation; 0016 race condition.\n\nCHAIN HYPOTHESES TO ACTUALLY EXECUTE (build the strongest end-to-end narrative and validate it live):\n1. **Unauthenticated full compromise**: with NO credentials, exploit SQLi at `POST /api/login` (username or password field) to obtain an admin Bearer token, then (a) read any customer's balance/transactions via `/api/account/{no}` (IDOR), (b) move funds out of an arbitrary account via `/api/transfer` (missing ownership check + negative amount + self-transfer), and (c) read protected files via `/index.jsp?content=../WEB-INF/web.xml`. If achievable in a single unauthenticated sequence, that is a materially stronger end-to-end impact than any single report.\n2. **Persistent XSS -> account takeover**: using the confirmed stored XSS on /admin/admin.jsp (vuln-0015) delivered from a low-priv account, show that a victim user/admin loading the console has script executed in-origin; determine whether that yields session/token theft enabling the IDOR/transfer/BFLA actions (i.e., an unauthorized state-change chain).\n3. **web.xml leak -> BFLA corroboration**: the traversal read discloses the `AdminFilter`/`/adimn/*` mismatch; show the leak directly enables discovering the broken authorization.\n\nMETHOD: drive everything with python scripts/curl against the live target; use a browser only if needed to confirm XSS-driven session theft. Keep state changes minimal and note any.\n\nDECISION RULE:\n- If a combined chain demonstrates a NEW end-to-end impact (e.g., a single unauthenticated request chain achieving fund theft or mass data compromise) that no existing report already conveys, FILE it via create_vulnerability_report as a chain finding with the full ordered PoC and honest CVSS. \n- If the chain only restates individual reports (i.e., dedup would reject it as the same root causes), DO NOT file; instead write a concise shared NOTE (category findings/methodology) documenting the chain, the exact steps, and why the constituent reports already cover it — this note will be used in the final report's technical analysis.\nRecord coverage (record_coverage) for the \"cross-finding attack chain\" surface with the outcome. Report any new report id via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "a0e2003a",
+        "agent_name": "BFLA Priv-Esc Validator+Reporter",
+        "status": "completed",
+        "skills": [
+          "broken_function_level_authorization",
+          "authentication_jwt",
+          "idor"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app.\n\nPRIORITY FINDING (reproduced in recon, needs formal validation + report): Broken Function Level Authorization / privilege escalation.\n- Regular user jsmith/demo1234 can invoke admin-only functionality:\n  - API: `POST /api/admin/addUser` and `POST /api/admin/changePassword` returned HTTP 200 \"success\" with jsmith's Bearer token (401 without token). Recon created test user `reconprobe1`.\n  - Web: `/admin/admin.jsp` console + `POST /admin/addUser`, `POST /admin/changePassword`, `POST /admin/addAccount` are guarded by AuthFilter only (login required) — AdminFilter is misconfigured to only the typo path `/adimn/*` (per leaked web.xml).\n- Your job: INDEPENDENTLY reproduce (get jsmith token via `POST /api/login` {username:jsmith,password:demo1234}; and web login via `POST /doLogin` uid=jsmith&passw=demo1234&btnSubmit=Login), then prove concrete admin impact: create a new admin-level user or change an existing user's password via the admin API/web as jsmith, and show the change takes effect (e.g. new user can log in). Determine the actual authorization check that is missing and why (AuthFilter vs AdminFilter). Confirm whether it works fully unauthenticated (401) vs any-authenticated-user (jsmith) — the escalation is authenticated-user → admin.\n\nRead shared recon notes (46f376, 429b77) and get_threat_model on \"http://demo.testfire.net\".\n\nCounterevidence pass: is jsmith perhaps actually an admin by design? Prove jsmith is a normal customer (only sees accounts 800002–800023, non-admin role) yet still reaches admin functions. Rule out that the endpoint silently no-ops.\n\nFILE with create_vulnerability_report: one report for the BFLA/privilege-escalation (user→admin: add users, change passwords). Include request/response evidence, impact (a normal customer can create users/modify credentials = full account/role takeover), CVSS (AV:N/AC:L/PR:L/UI:N, I:H/C:H justified by demonstrated admin actions). Then UPDATE coverage entry id 9ddcff to outcome \"reported\" (not a new row). Report the id via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "daec00ec",
+        "agent_name": "Business Logic & Race Hunter",
+        "status": "completed",
+        "skills": [
+          "business_logic",
+          "race_conditions"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app.\n\nGOAL: test the banking business logic for flaws (funds/workflow manipulation) and race conditions; validate and FILE reports for confirmed impactful issues.\n\nAreas (read notes 46f376, 429b77 and get_threat_model on \"http://demo.testfire.net\"):\n1. **Transfer logic**: `POST /bank/doTransfer` (fromAccount,toAccount,transferAmount) and `POST /api/transfer` {toAccount,fromAccount,transferAmount}. Test: negative amount (credit yourself / reverse a transfer), zero amount, huge amount / integer overflow, transferring from an account you don't own (combine with IDOR — but only claim what you prove), transferring to a non-existent account, and whether the server validates the source account belongs to the caller and that the amount is positive. Log in as jsmith/demo1234 and observe resulting balances via `/api/account/{no}` before/after.\n2. **Race condition / TOCTOU**: send many concurrent identical transfer requests (e.g. asyncio/aiohttp, 20–50 in flight) and check whether a balance can go negative or a transfer is applied more than once / beyond available funds (double-spend). Compare balance deltas to the number of successful responses.\n3. **Other logic**: `/bank/ccApply` (credit card application) — can you set fields you shouldn't? `/admin/addAccount` starting balance manipulation (coordinate: BFLA is another agent's report). `/static/doSurvey` and `/survey_questions.jsp?step=` — step/state manipulation. Feedback `cfile` hidden param arbitrary write (test but it may belong to a file-upload concern — only claim if write is proven).\n\nMETHOD: python/requests + asyncio for concurrency; capture before/after balances as evidence. Keep any state changes minimal and note them (this is a demo with synthetic data, so a single controlled transfer/self-reversal is acceptable if needed to prove the flaw — prefer read-only observation where possible).\n\nCounterevidence pass: e.g. a negative transfer that is rejected by validation is not a finding; a race that doesn't produce an inconsistent balance is not a finding. Distinguish real invariant violations from UI-only quirks.\n\nFILE create_vulnerability_report only for confirmed invariant violations with concrete evidence (e.g. balance becomes negative / funds created). Give honest CVSS. Do not report things that overlap an existing agent's scope (IDOR account reads, BFLA, credential disclosure) unless the logic flaw is distinct. Record coverage (record_coverage) for each surface tested. Report ids via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "d3ee5c1d",
+        "agent_name": "Client-Side Session & CSRF Hunter",
+        "status": "completed",
+        "skills": [
+          "authentication_jwt",
+          "csrf",
+          "open_redirect",
+          "browser_security"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app.\n\nGOAL: test client-side/session/token/CSRF weaknesses, validate what is real, and FILE reports for confirmed issues.\n\nItems from recon (read notes 46f376, 429b77 and get_threat_model on \"http://demo.testfire.net\"):\n1. **API token forgery / session handling**: `POST /api/login` returns a Bearer token reportedly structured as `base64( base64(user) \":\" base64(pass) ) \":\" <8 rand bytes>` (deterministic, no expiry). Test: (a) forge a token for a user you don't have creds for (e.g. admin) and see if `/api/account` or an admin endpoint accepts it; (b) confirm whether `GET /api/logout` actually invalidates the token (replay after logout); (c) check token expiry/reuse across sessions; (d) whether the token is accepted with a wrong/short signature. If you can forge a valid token for another user, that is a High/Critical auth bypass — prove it by accessing that user's data.\n2. **`AltoroAccounts` cookie (unsigned, non-HttpOnly, base64 of `acct~name~balance|...`)**: test whether tampering changes displayed accounts/balances, and whether the values are rendered into the page in a way that enables XSS or data spoofing (coordinate with the XSS agent — only claim XSS if script truly executes).\n3. **DOM open redirect**: `GET /disclaimer.htm?url=<u>` — JS sets `window.location.href=sDst`. Confirm it redirects to an arbitrary external host (validate with agent-browser; check for allowlist bypasses). Rate as open redirect (Low/Medium) unless you can chain it to token/credential theft.\n4. **CSRF**: do state-changing forms carry anti-CSRF tokens? Test `POST /bank/doTransfer` (fromAccount,toAccount,transferAmount), `POST /admin/addUser`, `POST /admin/changePassword`, `POST /sendFeedback`, `POST /doSubscribe`, and the JSON `/api/*` (check whether the API relies on cookies or only the Authorization header — if header-only and no CORS wildcard, CSRF may not apply; check CORS quickly with an Origin header). Since JSESSIONID lacks SameSite, cookie-auth'd state changes may be CSRF-able — prove with a cross-origin form POST (use a local HTML harness + agent-browser, or curl with a forged Origin) that the action executes without a token.\n\nMETHOD: use python requests / curl with a saved jsmith session (login `POST /doLogin` uid=jsmith&passw=demo1234&btnSubmit=Login) and Bearer token from `POST /api/login`. Use one `agent-browser --session cssess` for the browser-dependent checks (redirect, CSRF harness) and close it when done.\n\nCounterevidence pass for each: e.g. a forged token that is rejected is not a finding; a redirect that requires no allowlist check but has no security impact stays Low; CSRF that the API can't be driven to because it needs a non-cookie credential is not CSRF.\n\nFILE create_vulnerability_report only for confirmed, impactful issues (separate reports per distinct root cause — e.g. token forgery/auth-bypass is its own report; CSRF on state-changing actions is its own; open redirect its own, likely Low). Then UPDATE coverage entry id 328b06 (session/cookie/token) to the right outcome via update_coverage. Record additional coverage rows for CSRF and open-redirect surfaces if none exist. Report ids via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "e597b5b6",
+        "agent_name": "Credential Exposure Validator+Reporter",
+        "status": "completed",
+        "skills": [
+          "information_disclosure",
+          "weak_password_detection"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app.\n\nPRIORITY FINDING (reproduced in recon, needs formal validation + report): Sensitive/credential disclosure on the admin console.\n- `GET /admin/admin.jsp` (reachable by any logged-in user, e.g. jsmith/demo1234) leaks a user `<select>` whose option values embed usernames WITH passwords, e.g. `pdata2attadmin:P@ssw0rd123:user`, `pdata1admin:admin_hacked:admin`, plus DB schema/rows (Derby SYS.* tables; PEOPLE columns incl PASSWORD, TOTP_SECRET; ACCOUNTS rows).\n- Your job: INDEPENDENTLY reproduce. Log in as jsmith (web `POST /doLogin` uid=jsmith&passw=demo1234&btnSubmit=Login, then GET /admin/admin.jsp). Extract the leaked credential list and schema. Determine exactly which secrets are exposed (plaintext passwords, TOTP secrets, admin credential, DB structure) and whether any leaked credential grants ADMIN access — if so, log in with it (e.g. the leaked admin user) to prove real impact. Also check `/api/feedback/{id}` 500 stack-trace disclosure (Tomcat 7.0.92, IBM package, possibly SQL/paths) as a secondary information-disclosure item — but the primary report is the credential/schema leak.\n- Note: whether jsmith reaching /admin/admin.jsp is itself an authz bug is covered by another agent (BFLA). Focus THIS report on the disclosure of credentials/secrets and its impact.\n\nRead shared recon notes (46f376, 429b77) and get_threat_model on \"http://demo.testfire.net\".\n\nCounterevidence pass: confirm the credentials are genuinely valid secrets (try at least one leaked admin credential to authenticate) and not placeholders; confirm the data is server-rendered server data, not a static demo file.\n\nFILE with create_vulnerability_report: impact = disclosure of valid credentials (incl. admin) and internal DB schema enabling authentication bypass/privilege escalation. CVSS (AV:N/AC:L/PR:L/UI:N, C:H justified by usable admin credential). Then UPDATE coverage entry id b10ce9 to outcome \"reported\" (not a new row). Report id via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "b9a27dd3",
+        "agent_name": "File-Upload / cfile RCE Hunter",
+        "status": "completed",
+        "skills": [
+          "insecure_file_uploads",
+          "rce",
+          "path_traversal_lfi_rfi"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app (Tomcat 7.0.92, Java/JSP). Source checkout is at /workspace/AltoroJ (WebContent/ = web root; src/com/ibm/security/appscan/altoromutual/).\n\nGOAL (highest-value remaining possibility): determine whether the feedback `cfile` parameter (or ANY upload/write sink) permits writing attacker-controlled content to a web-reachable path, which could yield RCE (JSP webshell) or at least arbitrary file write.\n\nContext from recon/prior work (read notes 46f376, 429b77; coverage entry a38b44): `POST /sendFeedback` has fields name,email_addr,subject,comments,cfile (cfile defaulted to `comments.txt`, hidden). Prior testing got HTTP 200 \"Thank You\" for arbitrary cfile values (`comments.txt`, `../WEB-INF/x.jsp`, `../../x`, `/tmp/x`) but could NOT read the written content back → write unproven.\n\nMETHOD:\n1. READ THE SOURCE first: inspect `FeedbackServlet` (src/com/ibm/security/appscan/altoromutual/servlet/FeedbackServlet.java) and any file-write utility to learn EXACTLY how `cfile` is used — the target directory, filename derivation, whether the name/path/extension is attacker-controlled, and where the file lands. This tells you whether a webshell is possible and where.\n2. Read-back oracle: the app has an unauthenticated path traversal read (vuln-0003): `GET /index.jsp?content=../<path>`. Use it to read back whatever you write (e.g. write a unique marker via cfile then `content=../<resolved-path>`). Determine the real on-disk location the servlet writes to and whether it is inside the web root.\n3. If the extension/name is controllable, attempt to write a benign JSP marker (e.g. content that returns a unique string) to a web-reachable location, then request it directly (or include it) and confirm EXECUTION. A single benign, self-cleaning JSP that echoes a marker is acceptable proof on this authorized demo; delete it afterwards if the app allows.\n4. Also audit `POST /api/feedback/submit` and any other endpoint taking a filename/path.\n\nCounterevidence pass: if the write is to a fixed/limited path, or the filename is sanitized to a constant, or the content is not attacker-controlled, or the location is not web-served/executable — then it is NOT RCE; close precisely, naming the control (file:line) that neutralizes it.\n\nFILE create_vulnerability_report only if you prove arbitrary write (and especially RCE). Severity: file write → potentially critical (RCE) if a webshell executes; otherwise medium (arbitrary file write). Include the exact request/response and the source location; add inline code_locations fix if the source shows the sink. Then UPDATE coverage entry a38b44 (surface \"POST /sendFeedback (cfile hidden param)\", risk \"Arbitrary file write\") via update_coverage to the right outcome (reported / ruled_out / no_issue_found) with evidence. Report id via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "5b527eb9",
+        "agent_name": "IDOR Validator+Reporter",
+        "status": "completed",
+        "skills": [
+          "idor",
+          "information_disclosure"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app.\n\nPRIORITY FINDING (reproduced in recon, needs formal validation + report): IDOR / broken object-level authorization on account data.\n- `GET /api/account/800001` (not in jsmith's accounts 800002–800023) returns balance + transactions.\n- `GET /bank/showAccount?listAccounts=800001` returns \"Account History - 800001\"; `listAccounts=800010` returns large body.\n- jsmith/demo1234 is the low-priv user (Bearer token from `POST /api/login`; web session via `POST /doLogin`).\n- Your job: INDEPENDENTLY reproduce, then PROVE cross-account impact: enumerate a range of account numbers (e.g. 800000–800030 and the card 4539082039396288) as jsmith, and retrieve balances/transactions/PII that do not belong to jsmith. Also test `GET/POST /api/account/{no}/transactions` and `GET /bank/showTransactions` for the same flaw. Quantify how many distinct accounts are exposed and what data fields (names, balances, transactions) are returned. Confirm the enumerated account is genuinely not jsmith's (compare to `GET /api/account` list).\n\nRead shared recon notes (46f376, 429b77) and get_threat_model on \"http://demo.testfire.net\".\n\nCounterevidence pass: confirm the data really belongs to other customers (not a shared/public account or a labeled demo artifact) and that authorization genuinely should apply (the API lists only jsmith's accounts as his).\n\nFILE with create_vulnerability_report: impact = horizontal privilege escalation / mass account-data disclosure across all customers. Include enumeration evidence, CVSS (AV:N/AC:L/PR:L/UI:N, C:H — broad read of other users' financial records). Then UPDATE coverage entry id 3c3f4b to outcome \"reported\" (not a new row). Report id via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "076e0ff8",
+        "agent_name": "Path Traversal Validator+Reporter",
+        "status": "completed",
+        "skills": [
+          "path_traversal_lfi_rfi",
+          "information_disclosure"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). This is AltoroJ, an intentionally-vulnerable demo banking app (synthetic data).\n\nPRIORITY FINDING (already reproduced in recon, needs formal validation + report): Path traversal / arbitrary local file read via the `content` parameter.\n- PoC seen: `GET /index.jsp?content=../WEB-INF/web.xml` returned the full 14141-byte web.xml. Also `GET /index.jsp?content=../index.jsp`.\n- Your job: INDEPENDENTLY reproduce it, then EXPAND the impact to the strongest demonstrable read. Try to read high-value files: `/index.jsp?content=../WEB-INF/web.xml`, `../WEB-INF/web.xml`, other WEB-INF files, `../WEB-INF/classes/...` (Java classes/config), relative traversal to `/etc/passwd` or the Tomcat conf (`../conf/tomcat-users.xml`, `../conf/server.xml`), the app's DB/config files, and any `*.properties`. Determine the usable traversal depth (`../` vs `..%2f` vs encoded variants) and whether absolute-ish paths or null bytes extend reach. Establish whether this is unauthenticated (it should be).\n- Also confirm whether `index.jsp` vs `default.jsp` both take the param and whether any other page (e.g. survey/disclaimer) shares the same include sink.\n\nRead the shared recon notes (note 46f376 inventory, note 429b77 candidates) and get_threat_model on \"http://demo.testfire.net\". Confirmed creds jsmith/demo1234 exist but this should need none.\n\nBefore filing: run the counterevidence pass (is this really reading outside the web root, or just echoing a template? prove the returned bytes are genuinely file content not a static page; rule out that only whitelisted filenames are served). Set confidence honestly.\n\nThen FILE a vulnerability report with create_vulnerability_report: exact request/response evidence (fenced blocks), impact = unauthorized read of application source/config/secrets leading to further compromise, accurate CVSS (likely AV:N/AC:L/PR:N/UI:N, C:H if you read config/secrets — justify; note the demo is synthetic so rate on demonstrated technical impact). No source repo is provided, so no code_locations.\n\nThen UPDATE the existing coverage entry id 39b289 (surface \"/index.jsp and /default.jsp `content` parameter\", risk \"Path traversal / local file read\") via update_coverage to outcome \"reported\" with evidence — do NOT create a new coverage row. Report the report id via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "6baa4269",
+        "agent_name": "Recon & Surface Mapping",
+        "status": "completed",
+        "skills": [
+          "reconnaissance/asset_discovery",
+          "tooling/katana",
+          "tooling/httpx",
+          "tooling/ffuf",
+          "tooling/nuclei"
+        ],
+        "task": "Perform comprehensive BLACK-BOX reconnaissance and attack-surface mapping of the single in-scope target http://demo.testfire.net (Altoro Mutual demo banking app). Authorization is fully verified and in-scope — proceed.\n\nYou are the FIRST agent on this scan; no threat model exists yet and no prior coverage. Everyone downstream depends on your output, so be thorough and concrete.\n\nDeliverables:\n1. Technology fingerprint: web server, framework (likely Java/JSP/Tomcat), language, any version banners, WAF presence (wafw00f), TLS/config observations.\n2. Full endpoint inventory: crawl the site (katana and/or gospider, bounded depth ~3-4; also manual browse with agent-browser --session recon-map). Enumerate ALL pages, forms (with field names/methods/actions), query parameters, and links. Include: login, search, feedback, subscribe, account summary, transfer, admin console, and any /bank, /admin, /ws, /api, /cgi paths. Try directory/file discovery (dirsearch or ffuf) with a modest wordlist against common JSP/Java paths and known Altoro endpoints.\n3. Authentication & session model: the login flow (which endpoint, param names like uid/passw, cookies set, session cookie flags HttpOnly/Secure/SameSite), what roles exist (user vs admin), and whether there are default/known demo credentials you can confirm with a single login attempt (e.g. admin/admin, jsmith/demo1234). Do NOT brute force — just try known demo creds once each and report.\n4. Hidden/interesting surfaces: robots.txt, sitemap.xml, HTTP methods allowed, any comments/source hints (HTML comments, JS files) that reveal endpoints, hidden admin functionality, or version info. Check /ws (SOAP web services) and any WSDL.\n5. Record findings as shared NOTES (category wiki/methodology) and record coverage for each surface you assess (record_coverage with surface + risk area + outcome). Explicitly list the top high-value attack surfaces for downstream hunters.\n\nConstraints: stay strictly on http://demo.testfire.net. Keep crawls bounded (depth/duration). Tidy raw tool output (extract endpoints, then remove large raw files). Do not attempt destructive actions.\n\nAt the end, do NOT file vulnerability reports (leave that to validation/reporting agents) — instead give your final summary via agent_finish with: the endpoint/parameter inventory, confirmed credentials (if any), tech stack, and a ranked list of the highest-value surfaces to test next.",
+        "is_root": false
+      },
+      {
+        "agent_id": "a6cd0fbf",
+        "agent_name": "Residual Gaps Closer",
+        "status": "completed",
+        "skills": [
+          "xss",
+          "business_logic",
+          "mass_assignment"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app. Source checkout at /workspace/AltoroJ (WebContent/ = web root).\n\nClose these specific open items (read notes 46f376, 429b77; source in /workspace/AltoroJ):\n\n1. **Stored feedback render sink** (coverage 5f19c3, needs_follow_up): A stored-XSS via feedback was plausible but no HTML page rendering stored feedback was found. Grep the source (FeedbackServlet, JSPs, any admin/bank view, /api/feedback) for where FEEDBACK rows are rendered. Try reading the stored file directly (e.g. via the /index.jsp?content=../ traversal to the feedback output dir), and any page that lists feedback. If a render sink exists that outputs feedback unescaped, validate stored XSS in a browser and FILE it. If none exists, close as ruled_out naming where feedback is (not) rendered.\n\n2. **Stored XSS vuln-0015 cross-user confirmation**: The report for stored XSS via /admin/addUser username rendering in /admin/admin.jsp is only confirmed in the storing user's session. Create a SECOND working account and confirm the payload fires for a DIFFERENT user loading /admin/admin.jsp. IMPORTANT gotcha: login lowercases passwords (DBUtil.isValidUser), so create the second user with an all-lowercase password, or use an existing known account. If cross-user execution is confirmed, call update_vulnerability_report on vuln-0015 to raise severity (High) with the new evidence + PoC; if it fails, state why.\n\n3. **/bank/ccApply parameter/field manipulation** (coverage 34a3de, needs_follow_up): GET returns 405 and a generic POST returns 500. Read the source (CCApplyServlet + the ccApply form/JSP) to get the EXACT expected field names, then POST a valid application and test mass-assignment / field-manipulation (e.g. injecting role/balance/approval-style fields the form does not expose). FILE only if a real unauthorized field binding or logic abuse is proven; otherwise close with the reason.\n\nFor each item UPDATE the existing coverage entry (34a3de, 5f19c3, 38962d for vuln-0015) via update_coverage — do not create new rows. Use counterevidence discipline. Do not re-report anything already filed. Report any new report ids via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "5ec9db4b",
+        "agent_name": "Root Agent",
+        "status": "waiting",
+        "skills": [],
+        "task": "\n\nURLs: - http://demo.testfire.net",
+        "is_root": true
+      },
+      {
+        "agent_id": "a46da33c",
+        "agent_name": "SQLi & XPath Injection Hunter",
+        "status": "completed",
+        "skills": [
+          "sql_injection",
+          "nosql_injection",
+          "tooling/sqlmap"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app (Tomcat 7.0.92, Java/JSP, Apache Derby DB, Jersey REST /api). No WAF. Confirmed creds jsmith/demo1234.\n\nGOAL: prove (or cleanly rule out) injection on identified sinks and FILE reports for any confirmed injection.\n\nSinks from recon (read notes 46f376, 429b77 and get_threat_model on \"http://demo.testfire.net\"):\n1. SQL injection candidates:\n   - `GET /search.jsp?query=<q>` (reflected, likely SQL behind search)\n   - `POST /doLogin` params `uid`,`passw`,`btnSubmit` (auth bypass via SQLi)\n   - `POST /api/login` {username,password}\n   - account/transaction params: `GET /api/account/{no}` (account number), `POST /api/account/{no}/transactions` {startDate,endDate}, `POST /api/transfer`. The app uses Apache Derby (DB also leaks schema via admin page).\n2. XPath injection: `GET /bank/queryxpath.jsp?content=queryxpath.jsp&query=<title>` (news search; recon confirmed the sink executes an XPath query but did not prove injection).\n\nMETHOD: Drive payloads via python scripts / sqlmap (do not hand-iterate). For SQLi:\n- Manual differential first: single quote, `' OR '1'='1`, comment styles, boolean/time probes; watch for errors (Derby exceptions/500), status/length differentials, and auth bypass on the login forms.\n- Then automated: `sqlmap` against /search.jsp?query, POST /doLogin (--data \"uid=...&passw=...&btnSubmit=Login\"), and POST /api/login (JSON, --headers for Content-Type). Use `--level 3 --risk 2`, non-interactive (`--batch`), captured via Caiox/curl. Confirm the DBMS is Derby and enumerate a table/column as impact evidence (e.g. USERS/PEOPLE). Keep it read-only-ish; no destructive flags.\n- For XPath: test `query=Watchfire' ` and boolean-based `' or '1'='1` vs `' or '1'='2`, and enumeration payloads (`'] | //* | //*['` etc.) to prove boolean/blind extraction; compare response size/content.\n\nCounterevidence pass per finding (e.g. maybe the quote is escaped; maybe the API whitelists). FILE create_vulnerability_report for each DISTINCT confirmed injection (likely one report for the SQLi auth-bypass/search and one for the XPath injection if both confirm — do not merge unrelated sinks; do not re-file the same root cause). Include request/response evidence and honest CVSS.\n\nThen UPDATE coverage entries: id 5d1335 (SQLi on /search.jsp, /doLogin, /api/login) → outcome \"reported\" or \"no_issue_found\"/\"ruled_out\" with the named control; id ddbca9 (XPath /bank/queryxpath.jsp) → same. Use update_coverage, not new rows. Report ids via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "03cff686",
+        "agent_name": "SSRF Validator+Reporter",
+        "status": "completed",
+        "skills": [
+          "ssrf",
+          "rce"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app.\n\nGOAL: prove (or rule out) SSRF on the reported sink and FILE a report if confirmed.\n\nSink from recon (read notes 46f376, 429b77 and get_threat_model on \"http://demo.testfire.net\"):\n- `GET /util/serverStatusCheckService.jsp?HostName=<host>` returns JSON `{\"HostName\":...,\"HostStatus\":\"OK\"}`. Recon saw NO differential (static OK for valid/invalid/malformed). Also reachable via `GET /status_check.jsp`. This looks like the source code's `ServerStatusCheck` which does an HTTP HEAD/GET to `http://<HostName>` and may be blind.\n- Related: `POST /doSubscribe` takes `txtEmail`; `/sendFeedback` has a hidden `cfile`; look for any URL-fetching feature (e.g. stock quotes, RSS).\n\nMETHOD:\n1. Confirm behavior: baseline vs HostName=127.0.0.1, localhost, an external host you control, and a malformed value; measure response/time differentials.\n2. Use OOB: start the sandbox's `interactsh-client` (or a collaborator payload) and issue `HostName=<your-oob-domain>`; also try internal targets to fingerprint (e.g. `HostName=127.0.0.1:8080`, `localhost:22`, cloud metadata `169.254.169.254`). If the server performs the fetch, you'll get an OOB DNS/HTTP hit — that is the proof.\n3. If it is a full SSRF, demonstrate reaching an internal-only service (the app's own Tomcat admin/manager, or metadata) — but only in-scope host http://demo.testfire.net; external OOB callback domains are fine for the collaboration server. Do not attack third parties.\n\nNote: if the parameter is only appended into a non-fetch (e.g. displayed), it's not SSRF — then close as ruled_out naming the control/behavior.\n\nCounterevidence pass: a DNS/HTTP hit to your collaborator could also come from a scanner or the proxy — correlate timing and the callback's source details. A static \"OK\" with no callback = not proven.\n\nIf confirmed: FILE create_vulnerability_report (blind SSRF, impact = internal network access / port scan / metadata; CVSS AC may be H if blind). Then UPDATE coverage entry id edd7bc to outcome \"reported\" (or \"ruled_out\"/\"no_issue_found\" with the named control). Use update_coverage, not a new row. Report id via agent_finish.",
+        "is_root": false
+      },
+      {
+        "agent_id": "82d2bb5f",
+        "agent_name": "XSS Hunter",
+        "status": "completed",
+        "skills": [
+          "xss",
+          "browser_security"
+        ],
+        "task": "Target: http://demo.testfire.net (in-scope, authorized). AltoroJ demo banking app.\n\nGOAL: find, validate, and FILE reports for confirmed XSS (reflected, stored, DOM).\n\nSurfaces from recon (read notes 46f376, 429b77 and get_threat_model on \"http://demo.testfire.net\"):\n- Reflected: `GET /search.jsp?query=<q>` reflects `query` in the HTML results page. Also test other reflected params: `/survey_questions.jsp?step=`, `/index.jsp?content=`, `/disclaimer.htm?url=`.\n- Stored: `POST /sendFeedback` (params name, email_addr, subject, comments, cfile) — feedback is stored; check if it is rendered unescaped somewhere/admin view or via `POST /api/feedback/submit` + `GET /api/feedback/{id}`. Also `/doSubscribe` (txtEmail) may be reflected into a page.\n- DOM: `disclaimer.htm?url=` — JS sets `window.location.href` (that's an open redirect, covered elsewhere, but also check any `innerHTML`/document.write sinks in /swagger or the app JS).\n\nMETHOD:\n1. Fingerprint output encoding: send a canary and inspect the exact response context (HTML body, attribute, JS string, JSON). Determine what characters are/aren't encoded.\n2. Build context-appropriate payloads via python requests (batch, don't hand-click): e.g. `<script>alert(1)</script>`, `\"><img src=x onerror=alert(1)>`, `'\"><svg onload=alert(1)>`, and event-handler variants. For reflected, confirm the payload appears UNENCODED and executable in the response HTML.\n3. Validate execution: use `agent-browser --session xss` to load the crafted URL / submit the stored payload and confirm script execution (e.g. via a unique marker like `alert(document.domain)` or setting `document.title`, then read it back with `agent-browser get title`). For stored XSS, submit once then load the page that renders it and confirm it fires. Also determine the AuthFilter/CSP situation (no CSP likely).\n4. Consider the `AltoroAccounts` cookie if it is parsed into the DOM (coordinate: the client-side agent covers cookie tampering; only claim XSS if script actually executes).\n\nCounterevidence pass: confirm the browser really executed script (not just reflected text). Distinguish HTML-encoded vs raw reflection. Avoid self-XSS-only claims (e.g. payload only in your own input field with no cross-user path).\n\nFILE create_vulnerability_report for each confirmed, distinct XSS (e.g. reflected in /search.jsp; stored via /sendFeedback if it renders elsewhere). Use a unique marker payload and include the exact response excerpt + browser confirmation. Honest CVSS (reflected = UI:R; stored in an authenticated admin view can be higher). Do not over-rate self-XSS.\n\nRecord coverage with record_coverage for each surface tested (reflected search, feedback stored, subscribe, survey) with outcome reported/no_issue_found/ruled_out/needs_follow_up. Report ids via agent_finish.",
+        "is_root": false
+      }
+    ],
+    "skills_exercised": [
+      "asset_discovery",
+      "authentication_jwt",
+      "broken_function_level_authorization",
+      "browser_security",
+      "business_logic",
+      "csrf",
+      "ffuf",
+      "httpx",
+      "idor",
+      "information_disclosure",
+      "insecure_file_uploads",
+      "katana",
+      "mass_assignment",
+      "nosql_injection",
+      "nuclei",
+      "open_redirect",
+      "path_traversal_lfi_rfi",
+      "race_conditions",
+      "rce",
+      "sql_injection",
+      "sqlmap",
+      "ssrf",
+      "weak_password_detection",
+      "xss"
+    ],
+    "findings_filed": 17,
+    "source": "runtime"
+  },
+  "completeness": {
+    "complete": false,
+    "scan_status": "running",
+    "exit_reason": null,
+    "caveats": [
+      "The scan ended with status 'running' rather than completing, so coverage reflects only the work finished before it stopped.",
+      "2 agent(s) did not finish cleanly (Attack Chain Exploitation Agent, Root Agent); any surface they held is under-covered."
+    ]
+  },
+  "entries": [
+    {
+      "surface": "/index.jsp and /default.jsp `content` parameter",
+      "risk_area": "Path traversal / local file read",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "Independently reproduced unauthenticated: GET /index.jsp?content=../WEB-INF/web.xml → HTTP 200, 14141 bytes, body embeds the real deployment descriptor (7380 bytes, <web-app>…</web-app>). Proved it is genuine file content, not a template/whitelist: `content=WEB-INF/web.xml` (no traversal) and `content=../WEB-INF/does-not-exist.xml` both return \"not available\"; a second protected file (../META-INF/MANIFEST.MF) is also readable. Encoded variants `..%2f`, `%2e%2e%2f`, `..%5c` all return the same descriptor. Deeper traversal (../../) NPEs (Tomcat clamps at webapp root), so the read is bounded to the deployed application. /default.jsp does not exist (404); the sink is /index.jsp only. Filed as vuln-0003 (High, CVSS 7.5, CWE-22).",
+      "recorded_by": "Path Traversal Validator+Reporter",
+      "recorded_at": "2026-09-20 21:37:18 UTC",
+      "updated_at": "2026-09-20 21:45:16 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/api/admin/addUser and /api/admin/changePassword; /admin/* web console",
+      "risk_area": "Broken function level authorization / privilege escalation",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "RE-VALIDATED and REPORTED as vuln-0005 (High, CVSS 8.1). Independently reproduced: jsmith (non-admin — /bank/main.jsp renders no ADMINISTRATION link, role 'user') reaches /admin/admin.jsp (200) and invokes admin functions. Web servlet path performs REAL state changes: POST /admin/addUser creates a user that authenticates; POST /admin/changePassword resets a pre-existing non-owned account (test_normal_abc) to an attacker-chosen password and the attacker logs in as it; POST /admin/addAccount adds accounts (800026/800027). Root cause confirmed from leaked web.xml + public AltoroJ source: AdminFilter is mapped to the misspelled /adimn/* so it never runs; AdminServlet has no role check; AuthFilter only requires login. API /api/admin/* accepted jsmith's token (200) vs 401 without; note the API handlers gate the DB write on enableAdminFunctions=false so they currently no-op, but still lack any role enforcement. Earlier apparent no-op was due to both login paths lowercasing the password — controlled for.",
+      "recorded_by": "BFLA Priv-Esc Validator+Reporter",
+      "recorded_at": "2026-09-20 21:37:18 UTC",
+      "updated_at": "2026-09-20 21:47:04 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/api/account/{accountNo} and /bank/showAccount?listAccounts=",
+      "risk_area": "IDOR / object-level authorization",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "Independently reproduced as jsmith. GET /api/account consistently lists only 15 owned accounts (800002,800003,4539082039396288,800011,800013-800023); enumerating 800000-800030 returned full balance + credits/debits + last_10_transactions for 12 accounts NOT in that list (800000,800001,800004-800010,800012,800024,800025). Negative control: non-existent 800026-800030 -> 500 {Error:null}; 800999/transactions -> {\"Error\":null}, proving real distinct records. Source confirms AccountAPI.java:63 'not checking the account number'. Filed vuln-0004 (CWE-639, CVSS 6.5, AV:N/AC:L/PR:L/UI:N/C:H). Card 4539082039396288 is jsmith's OWN account and excluded. Note: POST /api/account/{no}/transactions is correctly scoped (user.lookupAccount).",
+      "recorded_by": "IDOR Validator+Reporter",
+      "recorded_at": "2026-09-20 21:37:18 UTC",
+      "updated_at": "2026-09-20 21:46:24 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/admin/admin.jsp admin console",
+      "risk_area": "Sensitive information / credential disclosure",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "Independently reproduced and filed as vuln-0002 (Medium, CVSS 6.5, C:H). With a jsmith session, GET /admin/admin.jsp (HTTP 200, 29636-30336 bytes) renders user <option> values containing plaintext username:password:role, including the administrator credential pdata1admin:admin_hacked:admin. Validation: POST /doLogin uid=admin&passw=admin_hacked returns 302 to /bank/main.jsp (SUCCESS), while the documented default admin/admin is rejected (302 to login.jsp) — negative control proving the leaked value is the genuine non-default secret; the /api/login token base64-decodes to admin:admin_hacked. Schema/records also leaked (PEOPLE columns incl PASSWORD/TOTP_SECRET/ROLE; ACCOUNTS columns/balances; ACCOUNTS/PEOPLE/FEEDBACK/TRANSACTIONS + Derby SYS.* tables). Data confirmed live: newly created accounts appear in the list immediately. jsmith (non-admin) reaches the page; role boundary already broken by BFLA (separate finding).",
+      "recorded_by": "Credential Exposure Validator+Reporter",
+      "recorded_at": "2026-09-20 21:37:18 UTC",
+      "updated_at": "2026-09-20 21:45:11 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/bank/queryxpath.jsp `query` parameter",
+      "risk_area": "XPath injection",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Deployed ServletUtil.searchArticles matches articles with Java String.contains(query) over the parsed DOM — no XPath expression is compiled or evaluated. Proven behaviourally: known substrings match (Mercury, Announces, AppScan, fire, Watchfire) whereas the XPath tautology `ZZZ' or '1'='1` returns the same \"News title not found\" as the false predicate `ZZZ' or '1'='2` and as a benign non-match; the quote/`] | //* | //*['` payloads produced no error and no result-set change. Named control: ServletUtil.searchArticles uses `title.contains(query)` (substring containment), so no XPath metacharacter is interpreted.",
+      "recorded_by": "SQLi & XPath Injection Hunter",
+      "recorded_at": "2026-09-20 21:37:18 UTC",
+      "updated_at": "2026-09-20 21:52:00 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/util/serverStatusCheckService.jsp `HostName` parameter",
+      "risk_area": "SSRF",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "No server-side fetch exists. The sink is implemented in `WebContent/util/serverStatusCheckService.jsp` as a 4-line JSP that only string-interpolates `request.getParameter(\"HostName\")` into a JSON literal and returns the hardcoded constant `\"HostStatus\": \"OK\"` — there is no HTTP client, URL, socket, or any outbound call in the JSP or anywhere in the codebase (grep for openConnection/HttpURLConnection/new URL/HttpClient/Socket found no fetch sink; the only `Runtime.exec` is the local `content` file-include in index.jsp). The \"status check\" is performed entirely client-side by JavaScript (`serverStatusCheck.html` uses browser `XMLHttpRequest`), which is not SSRF. Behaviorally confirmed: identical `\"OK\"` and no timing differential (~0.23-0.25s baseline) for valid internal (127.0.0.1), external, malformed, and empty values, and an interactsh OOB payload (`HostName=<unique>.oast.site`) produced NO DNS/HTTP callback. The reflection itself is a separate, real issue that was filed as a reflected XSS (vuln-0001).",
+      "recorded_by": "SSRF Validator+Reporter",
+      "recorded_at": "2026-09-20 21:37:18 UTC",
+      "updated_at": "2026-09-20 21:45:01 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/search.jsp `query`, POST /doLogin `uid`/`passw`, POST /api/login",
+      "risk_area": "SQL injection",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "SQL injection CONFIRMED and reported (vuln-0009): the unparameterized credential query in DBUtil.isValidUser (string-concatenated Statement) permits authentication bypass including the admin account via the password field on POST /api/login and POST /doLogin (boolean oracle `' OR '1'='1` vs `' OR '1'='2`, plus a Derby lexical-error leak). /search.jsp `query` is NOT SQL-injectable: ServletUtil.searchSite -> searchFiles performs no database query and searchFiles explicitly returns empty for this demo; the parameter is only reflected into the page (Search Results block), with no SQL parsing or error of any kind.",
+      "recorded_by": "SQLi & XPath Injection Hunter",
+      "recorded_at": "2026-09-20 21:37:18 UTC",
+      "updated_at": "2026-09-20 21:52:00 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "Session management: JSESSIONID, AltoroAccounts cookie, API token, logout",
+      "risk_area": "Session/cookie/token security",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "API bearer token design confirmed weak and reported as its own finding: token = base64(base64(user):base64(pass):<8 rand bytes>), trailing signature NOT validated (empty/arbitrary accepted), plaintext password recoverable from the token and reusable on /doLogin, and GET /api/logout does not invalidate (replay still 200). AltoroAccounts cookie (unsigned, non-HttpOnly base64 of acct~name~balance) was tampered with modified balances and an HTML/script name; values were NOT reflected into any server-rendered page (main.jsp/showAccount use session data) -> no spoofing/XSS impact. Reported under vuln-0013.",
+      "recorded_by": "Client-Side Session & CSRF Hunter",
+      "recorded_at": "2026-09-20 21:37:18 UTC",
+      "updated_at": "2026-09-20 21:49:48 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "robots.txt / sitemap.xml / default error page",
+      "risk_area": "Information disclosure / hidden paths",
+      "outcome": "not_applicable",
+      "outcome_label": "Not applicable",
+      "evidence": "robots.txt and sitemap.xml both return the generic 404 page (6821 bytes baseline). No robots disallow hints. Custom 404 is a styled Altoro page.",
+      "recorded_by": "Recon & Surface Mapping",
+      "recorded_at": "2026-09-20 21:37:23 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "WAF / edge protection",
+      "risk_area": "WAF presence",
+      "outcome": "no_issue_found",
+      "outcome_label": "No issue identified",
+      "evidence": "wafw00f identified no WAF (generic detection, 7 requests). Server header Apache-Coyote direct; no CDN/WAF fingerprints. Testing can proceed unthrottled.",
+      "recorded_by": "Recon & Surface Mapping",
+      "recorded_at": "2026-09-20 21:37:23 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "Static/direct file discovery (WEB-INF, META-INF, .git, *.bak, server-status, dirsearch)",
+      "risk_area": "Exposed sensitive files / directories",
+      "outcome": "no_issue_found",
+      "outcome_label": "No issue identified",
+      "evidence": "Direct GETs to /WEB-INF/web.xml, /WEB-INF/classes/, /META-INF/, /.git/HEAD, /server-status, /index.jsp.bak all return 404 (6821B). Only traversal via index.jsp?content=../ reaches WEB-INF. dirsearch showed only /admin/* (all 302 to login) noise.",
+      "recorded_by": "Recon & Surface Mapping",
+      "recorded_at": "2026-09-20 21:37:23 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/util/serverStatusCheckService.jsp `HostName` parameter",
+      "risk_area": "Reflected XSS",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "CONFIRMED and filed as vuln-0001 (Medium, CVSS 6.1). `HostName` is reflected unescaped into a `Content-Type: text/html` response; a `<script>` payload executes in-browser (verified in a real browser engine: injected `window.__xss_pwned=1337` and `document.title='XSS'` were read back after render). No CSP/`X-Content-Type-Options` on the response.",
+      "recorded_by": "SSRF Validator+Reporter",
+      "recorded_at": "2026-09-20 21:45:01 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/api/feedback/{feedbackId}",
+      "risk_area": "Information disclosure via error/stack trace",
+      "outcome": "no_issue_found",
+      "outcome_label": "No issue identified",
+      "evidence": "With a valid Bearer token, GET /api/feedback/1 returns HTTP 500 with a Tomcat error page. Extracted content: exception type java.lang.IndexOutOfBoundsException wrapped in javax.servlet.ServletException, Jersey internals (org.glassfish.jersey.servlet.WebComponent/ ServletContainer), and application class/method names with line numbers (com.ibm.security.appscan.altoromutual.util.ServletUtil.getFeedback(ServletUtil.java:234), ...api.FeedbackAPI.getFeedback(FeedbackAPI.java:81)), plus the banner Apache Tomcat/7.0.92. No credentials, secrets, filesystem paths, SQL fragments, or configuration values are disclosed. This is a framework/version banner plus internal class identifiers only, with no reachable exploit or restricted data shown, so it falls below the reporting threshold as a standalone finding (recorded as an observation).",
+      "recorded_by": "Credential Exposure Validator+Reporter",
+      "recorded_at": "2026-09-20 21:45:11 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/bank/balance.jsp?acctId= and /bank/showAccount?listAccounts=",
+      "risk_area": "IDOR / object-level authorization",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "Same root cause as vuln-0004. Authenticated jsmith session: GET /bank/showAccount?listAccounts=800000,800001,800004,800010,800012 returned 200 with \"Account History - <acct>\" for accounts not in jsmith's list; direct /bank/balance.jsp?acctId=800000 also returned 200. Non-existent 800999 -> 500 (negative control). Fix included inline in vuln-0004 (WebContent/bank/balance.jsp).",
+      "recorded_by": "IDOR Validator+Reporter",
+      "recorded_at": "2026-09-20 21:46:24 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /api/account/{accountNo}/transactions",
+      "risk_area": "IDOR / object-level authorization",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Control present at src/com/ibm/security/appscan/altoromutual/api/AccountAPI.java:169 — handler uses user.lookupAccount(Long.parseLong(accountNo)) which returns null for accounts not owned by the caller, before fetching transactions. Live test: POST /api/account/{800000,800001,800004,800999}/transactions all returned HTTP 500 with no account data (NPE on null), so no cross-account disclosure.",
+      "recorded_by": "IDOR Validator+Reporter",
+      "recorded_at": "2026-09-20 21:46:24 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "WebContent/bank/transaction.jsp (GET/POST /bank/showTransactions)",
+      "risk_area": "IDOR / object-level authorization",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "transaction.jsp line 47 calls user.getUserTransactions(start, end, user.getAccounts()) — output is limited to the session user's own accounts; the endpoint takes only startDate/endDate, not an account identifier, so there is no foreign account reference to swap.",
+      "recorded_by": "IDOR Validator+Reporter",
+      "recorded_at": "2026-09-20 21:46:24 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /api/transfer (fromAccount ownership)",
+      "risk_area": "Broken object-level authorization / unauthorized fund transfer",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "jsmith's Bearer token drove a transfer with fromAccount=800001 (NOT in jsmith's /api/account list) into jsmith's 800011: HTTP 200 success, 800001 debited $1.00 (1002626437453.38 -> 1002626437452.38). Web /bank/doTransfer rejects the same source (\"Originating account is invalid\"), proving the API omits the ownership check. Report filed.",
+      "recorded_by": "Business Logic & Race Hunter",
+      "recorded_at": "2026-09-20 21:47:54 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /api/transfer (transferAmount sign)",
+      "risk_area": "Input validation – negative amount reverses fund flow",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "API accepts negative transferAmount and reverses debit/credit: from=own 800011 to victim 800001, amt=-1 -> 800011 +$1.00 (-0.01->0.99), 800001 -$1.00. Web endpoint rejects negative (\"Transfer amount is invalid\"). Also no insufficient-funds/upper-bound check (1,000,000 from a $342 balance succeeded; 1e30 accepted). Report filed.",
+      "recorded_by": "Business Logic & Race Hunter",
+      "recorded_at": "2026-09-20 21:47:54 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /bank/doTransfer and POST /api/transfer (fromAccount == toAccount)",
+      "risk_area": "Business logic – self-transfer creates funds",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "Self-transfer (from==to) is accepted despite client-side JS block; balance increases by the full amount with no debit. Web 3x $100 on 800023: 15->115->215->315. API $50 on 800023: 322->372. Confirmed on both endpoints. Report filed.",
+      "recorded_by": "Business Logic & Race Hunter",
+      "recorded_at": "2026-09-20 21:47:54 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /api/transfer (concurrent requests)",
+      "risk_area": "Race condition / lost update on balance",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "30 sequential $1 transfers 800013->800019 applied exactly (-30/+30); 30 concurrent identical transfers all returned HTTP 200 but moved only ~2-4 (src -2, dst +3). Non-atomic read-modify-write confirmed. Report filed.",
+      "recorded_by": "Business Logic & Race Hunter",
+      "recorded_at": "2026-09-20 21:47:54 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /sendFeedback (cfile hidden param)",
+      "risk_area": "Arbitrary file write",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Named control at a specific location: FeedbackServlet.doPost (src/com/ibm/security/appscan/altoromutual/servlet/FeedbackServlet.java:47-67) reads ONLY name, email_addr, subject, comments - it never calls request.getParameter(\"cfile\"). Feedback is persisted via OperationsUtil.sendFeedback -> DBUtil.storeFeedback (SQL INSERT INTO FEEDBACK, DBUtil.java:520-529); no path/file-write sink exists on this route. `cfile` occurs solely as a dead hidden input in WebContent/feedback.jsp:50 (grep over src/ and WebContent/ returns no other reference). No multipart/upload handling anywhere (no @MultipartConfig / getPart / ServletFileUpload / FileOutputStream in JSPs or servlets). Live confirmation on http://demo.testfire.net: 11 distinct cfile values (comments.txt, probe_up.txt, ../WebContent/..., ../WEB-INF/..., ../../..., /tmp/..., probe_up.jsp variants) all produced a byte-identical 200 \"Thank You\" (7029 bytes); the unique marker was unreadable at /probe_up.txt, /probe_up.jsp, /comments.txt (404) and via /index.jsp?content=../<file> traversal. Prior \"needs_follow_up\" was an artifact of testing a parameter the server ignores. NOT arbitrary file write.",
+      "recorded_by": "File-Upload / cfile RCE Hunter",
+      "recorded_at": "2026-09-20 21:47:54 UTC",
+      "updated_at": "2026-09-20 21:53:16 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /bank/doTransfer (negative amount)",
+      "risk_area": "Input validation – negative amount on web endpoint",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Web TransferServlet rejects negatives: POST with transferAmount=-25 returned \"ERROR: Transfer amount is invalid\" and balances were unchanged. Control runs before any balance update.",
+      "recorded_by": "Business Logic & Race Hunter",
+      "recorded_at": "2026-09-20 21:47:54 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/bank/ccApply",
+      "risk_area": "Business logic – field/parameter manipulation",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Specific control: CCApplyServlet (src/com/ibm/security/appscan/altoromutual/servlet/CCApplyServlet.java) reads exactly ONE request parameter, `passwd` (line 47); it binds no other field, stores nothing and changes no account/credit state (\"do nothing with credit card application\"). Field injection / mass assignment is therefore impossible — any role/balance/approval-style parameter is silently ignored. Verified live with a jsmith session: GET /bank/ccApply -> 405 (POST-only, explains the earlier GET 405); POST with no passwd -> 500 (NPE at passwd.trim(), explains the earlier generic-POST 500); POST passwd=demo1234 -> 200 /bank/applysuccess.jsp (\"Your new Altoro Mutual Gold VISA\"); POST passwd=wrong -> 200 /bank/apply.jsp (\"Login Failed...\"). The only sink is passwd -> DBUtil.isValidUser(username, passwd.trim().toLowerCase()), the unparameterized credential query already reported as vuln-0009. Even a successful injection there merely yields applysuccess.jsp with no state change, so it does not constitute unauthorized field binding or business-logic abuse and is not separately reportable.",
+      "recorded_by": "Residual Gaps Closer",
+      "recorded_at": "2026-09-20 21:47:54 UTC",
+      "updated_at": "2026-09-20 21:55:19 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/survey_questions.jsp?step= and /static/doSurvey",
+      "risk_area": "State/step manipulation",
+      "outcome": "no_issue_found",
+      "outcome_label": "No issue identified",
+      "evidence": "step accepts 1/2/99/a and only selects a static template (200, ~7000B, no state change, no error); /static/doSurvey GET returns a static 272B stub and POST -> 405. No server-side state machine to abuse.",
+      "recorded_by": "Business Logic & Race Hunter",
+      "recorded_at": "2026-09-20 21:47:54 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/admin/addAccount (starting balance)",
+      "risk_area": "Business logic – starting balance manipulation",
+      "outcome": "not_applicable",
+      "outcome_label": "Not applicable",
+      "evidence": "The addAccount form exposes only username + accttypes (Checking/Savings/IRA) + submit; no balance/amount field exists to manipulate. Any admin-console access itself is the BFLA agent's separate finding.",
+      "recorded_by": "Business Logic & Race Hunter",
+      "recorded_at": "2026-09-20 21:47:54 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "GET /search.jsp (query)",
+      "risk_area": "Reflected XSS",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "query reflected unencoded into element content; `<script>document.title=\"PWNED_SRCH\"</script>` executed in a real browser (title changed). No CSP/XSS filter. Filed vuln-0006.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:51 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "GET /index.jsp (content)",
+      "risk_area": "Reflected XSS (keyword-filter bypass)",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "content reflected raw into the error `<p>`; blacklist blocks script/onerror/onload/onclick/style but not `ontoggle`/`onstart`. `<details open ontoggle=document.title=7>` executed in browser (title=7). Filed vuln-0007.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:51 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "GET /bank/queryxpath.jsp (query)",
+      "risk_area": "Reflected XSS (attribute breakout)",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "query reflected unencoded into `value=\"...\"`; `\"><details open ontoggle=document.title=9>` broke out and executed in an authenticated browser session (title=9). No filter on this param. Filed vuln-0010.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:51 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /sendFeedback (name)",
+      "risk_area": "Reflected XSS",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "name echoed unencoded into the confirmation page; `<img src=x onerror=document.title=5>` executed after form submit (title=5). No encoding/CSRF token. Filed vuln-0012.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:51 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /admin/addUser -> GET /admin/admin.jsp (username)",
+      "risk_area": "Stored XSS",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "Cross-user execution CONFIRMED and vuln-0015 revised to High (CVSS 7.6). A payload stored by one account (jsmith) via POST /admin/addUser executes in a DIFFERENT account's session: a second account was created with an all-lowercase password (login at LoginServlet lower-cases passw before DBUtil.isValidUser, which is why earlier mixed-case tool-created accounts never authenticated), authenticated OK, and loading /admin/admin.jsp fired the stored payload — live browser eval returned window.__storedXss=778899 and 6 img[onerror] elements in the DOM, in a session that never touched Add User. Control check: unauthenticated /admin/admin.jsp -> 302 /login.jsp, so the victim session was genuinely authenticated. Render is global (getBankUsers = SELECT USER_ID FROM PEOPLE; admin.jsp:90 and :126 emit <option value=\"<%=user%>\"><%=user%></option> unencoded).",
+      "recorded_by": "Residual Gaps Closer",
+      "recorded_at": "2026-09-20 21:48:51 UTC",
+      "updated_at": "2026-09-20 21:55:19 UTC",
+      "previous_outcomes": [
+        "reported"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "GET /disclaimer.htm (url)",
+      "risk_area": "DOM XSS / open redirect",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "The page only passes `url` to `window.location.href`/`window.opener.location.href` (open redirect, separate finding) and to `document.write(encodeURI(sDst))`; `encodeURI` encodes `<`/`>`/`\"` so no script context is reachable. No HTML sink emits the raw value.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:56 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /doSubscribe (txtEmail)",
+      "risk_area": "Reflected XSS",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "txtEmail is validated as an email: only valid addresses are reflected (\"Thank you. Your email <addr> has been accepted\"); inputs containing `<`, `>`, `\"` are rejected and not reflected. An email value cannot contain the metacharacters required for injection.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:56 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "GET /survey_questions.jsp (step) and /static/doSurvey",
+      "risk_area": "Reflected XSS",
+      "outcome": "no_issue_found",
+      "outcome_label": "No issue identified",
+      "evidence": "Tested `step=a|b|c|1|2` and a `\"><svg onload=...>` payload; the parameter is not reflected into the response (no echoed value found). No injectable reflection on this endpoint.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:56 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "AltoroAccounts cookie rendering (/bank/main.jsp, /bank/showAccount)",
+      "risk_area": "Stored/DOM XSS via cookie tampering",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Set `AltoroAccounts` to base64 payloads containing `<svg onload=...>`/`<img onerror=...>` in the account name and requested main.jsp/showAccount as jsmith: the tampered value was not rendered (payload absent from response HTML; server re-derives account data from the session). No XSS sink for the cookie.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:56 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "GET /api/feedback/{id} error page",
+      "risk_area": "Reflected XSS",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "The 500 error page echoes the feedbackId but HTML-encodes it (`&quot;markerFB&lt;img ...&gt;`), so no markup is parsed. Endpoint requires a token; reflection is safely encoded.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:56 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /api/feedback/submit + stored feedback rendering",
+      "risk_area": "Stored XSS",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Specific control: the `enableFeedbackRetention` app property is false on the deployed instance, and every feedback write/render path is gated on it. Proven by the write oracle — POST /api/feedback/submit returns the JSON echo branch {name,email,subject,comments} and NOT the {\"status\":\"Thank you!\",\"feedbackId\":...} branch, which per OperationsUtil.sendFeedback (OperationsUtil.java:122) is only produced when the property is true; with it false sendFeedback returns null and DBUtil.storeFeedback is never called, so the FEEDBACK table is never written. The only consumers of that table are two property-gated render blocks — feedbacksuccess.jsp:51 (renders the submitted row) and admin/feedbackReview.jsp:33 (renders ALL rows) — and both skip their block: POST /sendFeedback -> feedbacksuccess.jsp (200) contains no \"Details of your feedback submission\" and no \"Your Name:\"; GET /admin/feedbackReview.jsp (200, reachable) contains no \"Customer feedback submissions\" heading and zero \"Feedback ID:\" rows. No other JSP/HTML page renders stored feedback (grep: only feedbacksuccess.jsp, admin/feedbackReview.jsp and the property-gated membertoc.jspf link reference it). With the property off there is no stored feedback to render anywhere, so no stored-XSS sink is reachable. (The earlier \"feedback was stored\" observation was incorrect — the API oracle shows the write branch was not taken.)",
+      "recorded_by": "Residual Gaps Closer",
+      "recorded_at": "2026-09-20 21:48:56 UTC",
+      "updated_at": "2026-09-20 21:55:19 UTC",
+      "previous_outcomes": [
+        "needs_follow_up"
+      ],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "GET /bank/showTransactions, POST /bank/doTransfer, POST /bank/customize.jsp, GET /bank/ccApply",
+      "risk_area": "Reflected XSS",
+      "outcome": "no_issue_found",
+      "outcome_label": "No issue identified",
+      "evidence": "Submitted `\"><svg onload=al1>` in startDate/endDate, fromAccount, content and subject; none of the values were reflected into the responses.",
+      "recorded_by": "XSS Hunter",
+      "recorded_at": "2026-09-20 21:48:56 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /api/login (username parameter)",
+      "risk_area": "SQL injection / authentication bypass",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "Confirmed: {\"username\":\"admin'-- \",\"password\":\"x\"} -> 200 with a token for admin (no valid password); token returns admin accounts 800000/800001/800009/800025. Negative control (admin/WRONGPASS) rejected 400; malformed comment leaks Derby parser error. Filed vuln-0009 (Critical).",
+      "recorded_by": "Client-Side Session & CSRF Hunter",
+      "recorded_at": "2026-09-20 21:49:48 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "State-changing web forms (POST /bank/doTransfer, /admin/addUser, /admin/changePassword, /sendFeedback, /doSubscribe, /bank/customize.jsp)",
+      "risk_area": "CSRF",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Dual finding: forms carry no anti-CSRF tokens and the server ignores Origin/Referer (a POST with forged Origin/Referer executed server-side), BUT the control that applies to a browser is Chromium's SameSite=Lax-by-default: an empirical cross-origin top-level form POST from 127.0.0.1:8899 to demo.testfire.net/admin/addUser omitted JSESSIONID (only the non-auth AltoroAccounts cookie was sent) and received 302 -> /login.jsp, so the action did not execute. GET requests to addUser/changePassword/sendFeedback/doSubscribe return 405; GET /bank/doTransfer returns only the form (no state change observed). Not exploitable in modern browsers.",
+      "recorded_by": "Client-Side Session & CSRF Hunter",
+      "recorded_at": "2026-09-20 21:49:48 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "REST API /api/* authentication and CORS",
+      "risk_area": "CSRF / CORS misconfiguration",
+      "outcome": "not_applicable",
+      "outcome_label": "Not applicable",
+      "evidence": "/api/* authenticates solely via the Authorization: Bearer header (GET /api/account with cookies but no token -> 401), so cookie-based CSRF does not apply. No Access-Control-Allow-Origin is returned for Origin: http://evil.example / null / https://attacker.com and preflight has none, so there is no cross-origin read/write via CORS.",
+      "recorded_by": "Client-Side Session & CSRF Hunter",
+      "recorded_at": "2026-09-20 21:49:48 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/disclaimer.htm url parameter",
+      "risk_area": "DOM-based XSS / open redirect",
+      "outcome": "reported",
+      "outcome_label": "Finding reported",
+      "evidence": "Confirmed in Chromium: clicking the OK image triggers go() which assigns the url value to window.location.href with no scheme validation. ?url=javascript:document.title=1 -> title becomes \"1\"; ?url=javascript:document.body.setAttribute%28%27data-y%27%2C%27OK9%27%29 -> body attr data-y=OK9 (arbitrary script execution in origin). ?url=http://example.com/ -> navigates to https://example.com/. Filed vuln-0017 (Medium).",
+      "recorded_by": "Client-Side Session & CSRF Hunter",
+      "recorded_at": "2026-09-20 21:49:48 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/api/account/{accountNo} accountNo parameter",
+      "risk_area": "SQL injection",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Control = numeric parsing before use. Authenticated requests with `800002'`, `800002' -- `, `800002 OR 1=1`, `800002' OR '1'='1` and `800002' AND '1'='2` all return HTTP 500 `{Error : For input string: \"800002'...\"}` (java NumberFormatException) with no SQL error and no boolean differential — the value is parsed as a number before any query is built.",
+      "recorded_by": "SQLi & XPath Injection Hunter",
+      "recorded_at": "2026-09-20 21:52:00 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/api/account/{accountNo}/transactions startDate/endDate",
+      "risk_area": "SQL injection",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Control = date-format validation. A valid range returns 200 {\"transactions\":[]}; injected values (`2024-01-01'`, `2024-01-01' OR '1'='1`, `2024-01-01' OR '1'='2`) all return HTTP 500 \"Date-time query must be in the format of ...\" with no SQL parse error and no true/false differential.",
+      "recorded_by": "SQLi & XPath Injection Hunter",
+      "recorded_at": "2026-09-20 21:52:00 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "/api/transfer transferAmount parameter",
+      "risk_area": "SQL injection",
+      "outcome": "ruled_out",
+      "outcome_label": "Ruled out",
+      "evidence": "Control = numeric parsing before use. `transferAmount=1` succeeds (200); `1'` returns HTTP 500 with `java.lang.NumberFormatException: For input string: \"1'\"`, and `1' OR '1'='1` vs `1' AND '1'='2` produce identical 500 responses — no SQL construction from the value.",
+      "recorded_by": "SQLi & XPath Injection Hunter",
+      "recorded_at": "2026-09-20 21:52:00 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "POST /api/feedback/submit",
+      "risk_area": "Arbitrary file write",
+      "outcome": "no_issue_found",
+      "outcome_label": "No issue identified",
+      "evidence": "FeedbackAPI.sendFeedback (src/com/ibm/security/appscan/altoromutual/api/FeedbackAPI.java) binds only name/email/subject/message from JSON and calls OperationsUtil.sendFeedback -> DBUtil.storeFeedback (SQL INSERT). No filename/path parameter is accepted and no filesystem write occurs.",
+      "recorded_by": "File-Upload / cfile RCE Hunter",
+      "recorded_at": "2026-09-20 21:53:16 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    },
+    {
+      "surface": "Application file-write sinks (src/**/*.java, WebContent/**/*.jsp)",
+      "risk_area": "Arbitrary file write / unrestricted upload",
+      "outcome": "no_issue_found",
+      "outcome_label": "No issue identified",
+      "evidence": "Audited every File/FileOutputStream/FileWriter/getRealPath use: ServletUtil.java:396 writes a FIXED path (swagger/properties.json) with server-derived content (context path), ServletUtil.initializeLogFile initializes a server-configured log path from WEB-INF/init.log; searchArticles/searchSite only read. No user-controlled path or content reaches a write sink; no upload/multipart endpoint exists in the app.",
+      "recorded_by": "File-Upload / cfile RCE Hunter",
+      "recorded_at": "2026-09-20 21:53:16 UTC",
+      "updated_at": "",
+      "previous_outcomes": [],
+      "source": "agent_reported"
+    }
+  ],
+  "gaps": [
+    {
+      "kind": "unrecorded_risk_class",
+      "risk_area": "browser security",
+      "detail": "Agent(s) Client-Side Session & CSRF Hunter, XSS Hunter were assigned the 'browser_security' skill, but no coverage entry records this class being assessed. Treat it as unexamined, not as clean."
+    },
+    {
+      "kind": "unrecorded_risk_class",
+      "risk_area": "mass assignment",
+      "detail": "Agent(s) Residual Gaps Closer were assigned the 'mass_assignment' skill, but no coverage entry records this class being assessed. Treat it as unexamined, not as clean."
+    },
+    {
+      "kind": "unrecorded_risk_class",
+      "risk_area": "nosql injection",
+      "detail": "Agent(s) SQLi & XPath Injection Hunter were assigned the 'nosql_injection' skill, but no coverage entry records this class being assessed. Treat it as unexamined, not as clean."
+    },
+    {
+      "kind": "unrecorded_risk_class",
+      "risk_area": "rce",
+      "detail": "Agent(s) File-Upload / cfile RCE Hunter, SSRF Validator+Reporter were assigned the 'rce' skill, but no coverage entry records this class being assessed. Treat it as unexamined, not as clean."
+    },
+    {
+      "kind": "agent_recorded_no_coverage",
+      "agent_name": "Attack Chain Exploitation Agent",
+      "detail": "Attack Chain Exploitation Agent ran (status: running) without recording any coverage. Whatever it examined is absent from this record."
+    }
+  ]
+}
